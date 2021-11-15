@@ -71,21 +71,33 @@ public class BombermanGame extends Application {
                 int pointX = bomberman.getX();
                 int pointY = bomberman.getY();
 
-                if (goUp && pointY > 32) {
-                    pointY -= step;
+                if (goUp) {
                     bomberman.update(pointX, pointY, Sprite.player_up.getFxImage());
+                    if (pointY > 32) {
+                        pointY -= step;
+                        bomberman.update(pointX, pointY, Sprite.player_up.getFxImage());
+                    }
                 }
-                if (goDown && pointY < 420) {
-                    pointY += step;
+                if (goDown) {
                     bomberman.update(pointX, pointY, Sprite.player_down.getFxImage());
+                    if (pointY < 420) {
+                        pointY += step;
+                        bomberman.update(pointX, pointY, Sprite.player_down.getFxImage());
+                    }
                 }
-                if (goLeft && pointX > 32) {
-                    pointX -= step;
+                if (goLeft) {
                     bomberman.update(pointX, pointY, Sprite.player_left.getFxImage());
+                    if (pointX > 32) {
+                        pointX -= step;
+                        bomberman.update(pointX, pointY, Sprite.player_left.getFxImage());
+                    }
                 }
-                if (goRight && pointX < 588) {
-                    pointX += step;
+                if (goRight) {
                     bomberman.update(pointX, pointY, Sprite.player_right.getFxImage());
+                    if (pointX < 588) {
+                        pointX += step;
+                        bomberman.update(pointX, pointY, Sprite.player_right.getFxImage());
+                    }
                 }
             }
         };

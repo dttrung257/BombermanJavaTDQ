@@ -11,18 +11,19 @@ import javafx.stage.Stage;
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.event.Event;
-import uet.oop.bomberman.entities.Bomber;
-import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.Grass;
-import uet.oop.bomberman.entities.Wall;
+import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BombermanGame extends Application {
-    
-    public static final int WIDTH = 20;
-    public static final int HEIGHT = 15;
+
+    public static final int WIDTH = 31;
+    public static final int HEIGHT = 13;
     boolean goUp, goDown, goRight, goLeft;
     private GraphicsContext gc;
     private Canvas canvas;
@@ -73,28 +74,28 @@ public class BombermanGame extends Application {
 
                 if (goUp) {
                     bomberman.update(pointX, pointY, Sprite.player_up.getFxImage());
-                    if (pointY > 32) {
+                    if (pointY > Sprite.SCALED_SIZE) {
                         pointY -= step;
                         bomberman.update(pointX, pointY, Sprite.player_up.getFxImage());
                     }
                 }
                 if (goDown) {
                     bomberman.update(pointX, pointY, Sprite.player_down.getFxImage());
-                    if (pointY < 420) {
+                    if (pointY < Sprite.SCALED_SIZE * (HEIGHT - 2)) {
                         pointY += step;
                         bomberman.update(pointX, pointY, Sprite.player_down.getFxImage());
                     }
                 }
                 if (goLeft) {
                     bomberman.update(pointX, pointY, Sprite.player_left.getFxImage());
-                    if (pointX > 32) {
+                    if (pointX > Sprite.SCALED_SIZE) {
                         pointX -= step;
                         bomberman.update(pointX, pointY, Sprite.player_left.getFxImage());
                     }
                 }
                 if (goRight) {
                     bomberman.update(pointX, pointY, Sprite.player_right.getFxImage());
-                    if (pointX < 588) {
+                    if (pointX < Sprite.SCALED_SIZE * (WIDTH - 1.625)) {
                         pointX += step;
                         bomberman.update(pointX, pointY, Sprite.player_right.getFxImage());
                     }
@@ -147,17 +148,49 @@ public class BombermanGame extends Application {
 
 
     public void createMap() {
-        for (int i = 0; i < WIDTH; i++) {
-            for (int j = 0; j < HEIGHT; j++) {
-                Entity object;
-                if (j == 0 || j == HEIGHT - 1 || i == 0 || i == WIDTH - 1) {
-                    object = new Wall(i, j, Sprite.wall.getFxImage());
+        try {
+            FileInputStream fileInputStream = new FileInputStream("res\\levels\\Level1.txt");
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            int l = bufferedReader.read();
+
+            String line = bufferedReader.readLine();
+            for (int i = 0; i < HEIGHT; i++) {
+                line = bufferedReader.readLine();
+                for (int j = 0; j < WIDTH; j++) {
+                    Entity object;
+                    Entity object1;
+                    if (line.charAt(j) == '#') {
+                        object = new Wall(j, i, Sprite.wall.getFxImage());
+                    } else if (line.charAt(j) == '*') {
+                        object = new Brick(j, i, Sprite.brick.getFxImage());
+                    } else if (line.charAt(j) == 'x') {
+                        object1 = new Portal(j, i, Sprite.portal.getFxImage());
+                        stillObjects.add(object1);
+                        object = new Brick(j, i, Sprite.brick.getFxImage());
+                    } else if (line.charAt(j) == 'b') {
+                        object1 = new BombItem(j, i, Sprite.bomb.getFxImage());
+                        stillObjects.add(object1);
+                        object = new Brick(j, i, Sprite.brick.getFxImage());
+                    } else if (line.charAt(j) == 'f') {
+                        object1 = new FlameItem(j, i, Sprite.powerup_flames.getFxImage());
+                        stillObjects.add(object1);
+                        object = new Brick(j, i, Sprite.brick.getFxImage());
+                    } else if (line.charAt(j) == 's') {
+                        object1 = new SpeedItem(j, i, Sprite.powerup_speed.getFxImage());
+                        stillObjects.add(object1);
+                        object = new Brick(j, i, Sprite.brick.getFxImage());
+                    } else {
+                        object = new Grass(j, i, Sprite.grass.getFxImage());
+                    }
+                    stillObjects.add(object);
                 }
-                else {
-                    object = new Grass(i, j, Sprite.grass.getFxImage());
-                }
-                stillObjects.add(object);
             }
+            bufferedReader.close();
+            inputStreamReader.close();
+            fileInputStream.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 

@@ -23,6 +23,7 @@ public class GamePlay {
     private static Canvas canvas;
     private static List<Entity> entities = new ArrayList<>();
     private static List<Entity> stillObjects = new ArrayList<>();
+    private static List<Enemy> enemies = new ArrayList<>();
     private static List<Entity> MapInfor = new ArrayList<>();
 
     public GamePlay(Canvas canvas, GraphicsContext gc, Scene scene) {
@@ -48,6 +49,7 @@ public class GamePlay {
             }
         };
         timer.start();
+        //enemies.get(0).moving();
     }
 
     public static void createMap() {
@@ -56,38 +58,66 @@ public class GamePlay {
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             int l = bufferedReader.read();
-
             String line = bufferedReader.readLine();
             for (int i = 0; i < HEIGHT; i++) {
                 line = bufferedReader.readLine();
                 for (int j = 0; j < WIDTH; j++) {
-                    Entity object;
-                    Entity object1;
-                    if (line.charAt(j) == '#') {
-                        object = new Wall(j, i, Sprite.wall.getFxImage());
-                    } else if (line.charAt(j) == '*') {
-                        object = new Brick(j, i, Sprite.brick.getFxImage());
-                    } else if (line.charAt(j) == 'x') {
-                        object1 = new Portal(j, i, Sprite.portal.getFxImage());
-                        stillObjects.add(object1);
-                        object = new Brick(j, i, Sprite.brick.getFxImage());
-                    } else if (line.charAt(j) == 'b') {
-                        object1 = new BombItem(j, i, Sprite.bomb.getFxImage());
-                        stillObjects.add(object1);
-                        object = new Brick(j, i, Sprite.brick.getFxImage());
-                    } else if (line.charAt(j) == 'f') {
-                        object1 = new FlameItem(j, i, Sprite.powerup_flames.getFxImage());
-                        stillObjects.add(object1);
-                        object = new Brick(j, i, Sprite.brick.getFxImage());
-                    } else if (line.charAt(j) == 's') {
-                        object1 = new SpeedItem(j, i, Sprite.powerup_speed.getFxImage());
-                        stillObjects.add(object1);
-                        object = new Brick(j, i, Sprite.brick.getFxImage());
-                    } else {
-                        object = new Grass(j, i, Sprite.grass.getFxImage());
+                    Entity object = null;
+                    Entity object1 = null;
+                    Entity object2 = null;
+                    char ch = line.charAt(j);
+                    switch (ch) {
+                        case '#':
+                            object = new Wall(j, i, Sprite.wall.getFxImage());
+                            break;
+                        case '1':
+                            Balloom b = new Balloom(j, i, Sprite.balloom_right1.getFxImage());
+                            enemies.add(b);
+                            object = null;
+                            object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                            break;
+                        case '2':
+                            Oneal o = new Oneal(j, i, Sprite.oneal_right1.getFxImage());
+                            enemies.add(o);
+                            object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                            object = null;
+                            break;
+                        case '*':
+                            object = new Brick(j, i, Sprite.brick.getFxImage());
+                            break;
+                        case 'x':
+                            object1 = new Portal(j, i, Sprite.portal.getFxImage());
+                            stillObjects.add(object1);
+                            object = new Brick(j, i, Sprite.brick.getFxImage());
+                            break;
+                        case 'b':
+                            object1 = new BombItem(j, i, Sprite.bomb.getFxImage());
+                            stillObjects.add(object1);
+                            object = new Brick(j, i, Sprite.brick.getFxImage());
+                            break;
+                        case 'f':
+                            object1 = new FlameItem(j, i, Sprite.powerup_flames.getFxImage());
+                            stillObjects.add(object1);
+                            object = new Brick(j, i, Sprite.brick.getFxImage());
+                            break;
+                        case 's':
+                            object1 = new SpeedItem(j, i, Sprite.powerup_speed.getFxImage());
+                            stillObjects.add(object1);
+                            object = new Brick(j, i, Sprite.brick.getFxImage());
+                            //object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                            break;
+                        default:
+                            object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                            break;
                     }
-                    stillObjects.add(object);
-                    MapInfor.add(object);
+                    if (object2 != null) {
+                        stillObjects.add(object2);
+                        MapInfor.add(object2);
+                    }
+                    if (object != null) {
+                        stillObjects.add(object);
+                        MapInfor.add(object);
+                    }
                 }
             }
             bufferedReader.close();
@@ -106,5 +136,6 @@ public class GamePlay {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         stillObjects.forEach(g -> g.render(gc));
         entities.forEach(g -> g.render(gc));
+        enemies.forEach(g -> g.render(gc));
     }
 }

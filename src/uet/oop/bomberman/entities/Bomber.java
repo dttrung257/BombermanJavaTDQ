@@ -28,11 +28,21 @@ public class Bomber extends Animation {
                 update(x + speed, y, Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2, animate, 16).getFxImage());
                 break;
         }
-        speed = 2;
+        speed = 5;
     }
 
     //Nếu nhả nút mũi tên thì đứng lại
     public void stand() {
+        if (x % Sprite.SCALED_SIZE <= 6) {
+            x = x / Sprite.SCALED_SIZE * Sprite.SCALED_SIZE;
+        } else if (x % Sprite.SCALED_SIZE >= 26) {
+            x = (x / Sprite.SCALED_SIZE + 1) * Sprite.SCALED_SIZE;
+        }
+        if (y % Sprite.SCALED_SIZE <= 6) {
+            y = y / Sprite.SCALED_SIZE * Sprite.SCALED_SIZE;
+        } else if (y % Sprite.SCALED_SIZE >= 26) {
+            y = (y / Sprite.SCALED_SIZE + 1) * Sprite.SCALED_SIZE;
+        }
         switch(direction) {
             case goUp:
                 update(x, y, Sprite.player_up.getFxImage());

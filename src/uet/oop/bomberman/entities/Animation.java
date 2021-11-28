@@ -12,9 +12,10 @@ import java.util.List;
  */
 public abstract class Animation extends Entity{
     int animate = 0;
-    int speed = 2;
+    int speed = 5;
     //Phương hướng di chuyển
     enum Direction {
+        stand,
         goUp,
         goDown,
         goLeft,
@@ -53,9 +54,12 @@ public abstract class Animation extends Entity{
                     speed = 0;
                 }
                 break;
+            default:
+                direction = Direction.stand;
+                break;
         };
         //tăng chỉ số hoạt ảnh để thay đổi sprite
-        if(animate == 16) animate = 0;
+        if(animate == 1600) animate = 0;
         else animate++;
     }
 

@@ -1,10 +1,21 @@
 package uet.oop.bomberman;
 
-import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import uet.oop.bomberman.entities.*;
+import uet.oop.bomberman.entities.Bomber;
+import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.entities.Point;
+import uet.oop.bomberman.entities.enemies.Balloom;
+import uet.oop.bomberman.entities.enemies.Enemy;
+import uet.oop.bomberman.entities.enemies.Oneal;
+import uet.oop.bomberman.entities.item.BombItem;
+import uet.oop.bomberman.entities.item.FlameItem;
+import uet.oop.bomberman.entities.item.SpeedItem;
+import uet.oop.bomberman.entities.staticEntity.Brick;
+import uet.oop.bomberman.entities.staticEntity.Grass;
+import uet.oop.bomberman.entities.staticEntity.Portal;
+import uet.oop.bomberman.entities.staticEntity.Wall;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.BufferedReader;
@@ -13,18 +24,16 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uet.oop.bomberman.graphics.Sprite.player_right;
-
 public class GamePlay {
     public static final int WIDTH = 31;
     public static final int HEIGHT = 13;
     private static Scene scene;
     private static GraphicsContext gc;
     private static Canvas canvas;
+    private static Bomber bomberman;
     private static List<Entity> entities = new ArrayList<>();
     private static List<Entity> stillObjects = new ArrayList<>();
     private static List<Enemy> enemies = new ArrayList<>();
-    private static List<Entity> MapInfor = new ArrayList<>();
 
     public GamePlay(Canvas canvas, GraphicsContext gc, Scene scene) {
         this.canvas = canvas;
@@ -32,25 +41,17 @@ public class GamePlay {
         this.scene = scene;
     }
 
-    public static void GameLoop() {
-        Animation bomberman = new Bomber(1, 1, Sprite.player_down.getFxImage());
-        entities.add(bomberman);
-        //Bắt sự kiện di chuyển bomber
-        AnimationTimer timer = new AnimationTimer() {
-            @Override
-            public void handle(long l) {
-                scene.setOnKeyPressed(event -> {
-                    bomberman.move_direction(event, MapInfor);
-                    bomberman.moving();
-                    scene.setOnKeyReleased(e -> {
-                        bomberman.stand();
-                    });
-                });
+    public static Entity getEntityAtPosition(int pointX, int pointY) {
+        Entity entity = null;
+        for (Entity e : entities) {;
+            if (e.getCoordinate().getX() == pointX && e.getCoordinate().getY() == pointY) {
+                entity = e;
+                break;
             }
-        };
-        timer.start();
-        //enemies.get(0).moving();
+        }
+        return entity;
     }
+
 
     public static void createMap() {
         try {
@@ -68,55 +69,55 @@ public class GamePlay {
                     char ch = line.charAt(j);
                     switch (ch) {
                         case '#':
-                            object = new Wall(j, i, Sprite.wall.getFxImage());
+                            object = new Wall(new Point(j, i), Sprite.wall.getFxImage());
                             break;
                         case '1':
-                            Balloom b = new Balloom(j, i, Sprite.balloom_right1.getFxImage());
+                            Balloom b = new Balloom(new Point(j, i), Sprite.balloom_right1.getFxImage());
                             enemies.add(b);
                             object = null;
-                            object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                            object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
                             break;
                         case '2':
-                            Oneal o = new Oneal(j, i, Sprite.oneal_right1.getFxImage());
+                            Oneal o = new Oneal(new Point(j, i), Sprite.oneal_right1.getFxImage());
                             enemies.add(o);
-                            object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                            object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
                             object = null;
                             break;
                         case '*':
-                            object = new Brick(j, i, Sprite.brick.getFxImage());
+                            object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             break;
                         case 'x':
-                            object1 = new Portal(j, i, Sprite.portal.getFxImage());
+                            object1 = new Portal(new Point(j, i), Sprite.portal.getFxImage());
                             stillObjects.add(object1);
-                            object = new Brick(j, i, Sprite.brick.getFxImage());
+                            object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             break;
                         case 'b':
-                            object1 = new BombItem(j, i, Sprite.bomb.getFxImage());
+                            object1 = new BombItem(new Point(j, i), Sprite.bomb.getFxImage());
                             stillObjects.add(object1);
-                            object = new Brick(j, i, Sprite.brick.getFxImage());
+                            object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             break;
                         case 'f':
-                            object1 = new FlameItem(j, i, Sprite.powerup_flames.getFxImage());
+                            object1 = new FlameItem(new Point(j, i), Sprite.powerup_flames.getFxImage());
                             stillObjects.add(object1);
-                            object = new Brick(j, i, Sprite.brick.getFxImage());
+                            object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             break;
                         case 's':
-                            object1 = new SpeedItem(j, i, Sprite.powerup_speed.getFxImage());
+                            object1 = new SpeedItem(new Point(j, i), Sprite.powerup_speed.getFxImage());
                             stillObjects.add(object1);
-                            object = new Brick(j, i, Sprite.brick.getFxImage());
+                            object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             //object2 = new Grass(j, i, Sprite.grass.getFxImage());
                             break;
                         default:
-                            object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                            object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
                             break;
                     }
                     if (object2 != null) {
                         stillObjects.add(object2);
-                        MapInfor.add(object2);
+                        entities.add(object2);
                     }
                     if (object != null) {
                         stillObjects.add(object);
-                        MapInfor.add(object);
+                        entities.add(object);
                     }
                 }
             }
@@ -128,14 +129,18 @@ public class GamePlay {
         }
     }
 
-    /*public void update() {
+    public void update() {
         entities.forEach(Entity::update);
-    }*/
+    }
 
-    public static void render() {
+    public void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         stillObjects.forEach(g -> g.render(gc));
         entities.forEach(g -> g.render(gc));
         enemies.forEach(g -> g.render(gc));
+    }
+
+    public static List<Entity> getEntities() {
+        return entities;
     }
 }

@@ -8,40 +8,37 @@ import javafx.scene.paint.Color;
 import uet.oop.bomberman.graphics.Sprite;
 
 public abstract class Entity {
-    //Tọa độ X tính từ góc trái trên trong Canvas
-    protected int x;
-
-    //Tọa độ Y tính từ góc trái trên trong Canvas
-    protected int y;
+    protected Point coordinate;
+    protected Point canvas_coordinate;
 
     protected Image img;
 
     //Khởi tạo đối tượng, chuyển từ tọa độ đơn vị sang tọa độ trong canvas
-    public Entity( int xUnit, int yUnit, Image img) {
-        this.x = xUnit * Sprite.SCALED_SIZE;
-        this.y = yUnit * Sprite.SCALED_SIZE;
+    public Entity(Point coordinate , Image img) {
+        this.coordinate = coordinate;
         this.img = img;
+        canvas_coordinate = coordinate.toCanvasCoordinate();
     }
 
     public void render(GraphicsContext gc) {
-        gc.drawImage(img, x, y);
+        gc.drawImage(img, canvas_coordinate.getX(), canvas_coordinate.getY());
     }
 
-    public abstract void update(int newX, int newY, Image newImage);
+    public abstract void update();
 
-    public int getX() {
-        return x;
+    public Point getCoordinate() {
+        return coordinate;
     }
 
-    public int getY() {
-        return y;
+    public void setCoordinate(Point coordinate) {
+        this.coordinate = coordinate;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public Point getCanvas_coordinate() {
+        return canvas_coordinate;
     }
 
-    public void setY(int y) {
-        this.y = y;
+    public void setCanvas_coordinate(Point canvas_coordinate) {
+        this.canvas_coordinate = canvas_coordinate;
     }
 }

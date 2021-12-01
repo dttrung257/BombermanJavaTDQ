@@ -13,6 +13,7 @@ public class Sprite {
 	public static final int DEFAULT_SIZE = 16;
 	public static final int SCALED_SIZE = DEFAULT_SIZE * 2;
     private static final int TRANSPARENT_COLOR = 0xffff00ff;
+	public static final int BOMBER_SPEED = 1;
 	public final int SIZE;
 	private int _x;
 	private int _y;

@@ -3,6 +3,9 @@ package uet.oop.bomberman;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import uet.oop.bomberman.entities.AnimatedEntity;
 import uet.oop.bomberman.entities.Bomber;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
@@ -20,6 +23,7 @@ import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +58,10 @@ public class GamePlay {
 
 
     public static void createMap() {
+        //bomberman = new Bomber(new Point(1, 1), Sprite.player_right.getFxImage());
+        //entities.add(bomberman);
         try {
-            FileInputStream fileInputStream = new FileInputStream("res\\levels\\Level1.txt");
+            FileInputStream fileInputStream = new FileInputStream("res\\levels\\Level2.txt");
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             int l = bufferedReader.read();
@@ -131,16 +137,31 @@ public class GamePlay {
 
     public void update() {
         entities.forEach(Entity::update);
+        enemies.forEach(Enemy::update);
     }
 
     public void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        stillObjects.forEach(g -> g.render(gc));
-        entities.forEach(g -> g.render(gc));
-        enemies.forEach(g -> g.render(gc));
+        if (bomberman.isAlive()) {
+            stillObjects.forEach(g -> g.render(gc));
+            entities.forEach(g -> g.render(gc));
+            enemies.forEach(g -> g.render(gc));
+        }
     }
 
     public static List<Entity> getEntities() {
         return entities;
+    }
+
+    public static Bomber getBomberman() {
+        return bomberman;
+    }
+
+    public static void setBomberman(Bomber bomberman) {
+        GamePlay.bomberman = bomberman;
+    }
+
+    public static List<Enemy> getEnemies() {
+        return enemies;
     }
 }

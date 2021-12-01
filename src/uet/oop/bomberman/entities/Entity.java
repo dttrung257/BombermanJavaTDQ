@@ -14,7 +14,7 @@ public abstract class Entity {
     protected Image img;
 
     //Khởi tạo đối tượng, chuyển từ tọa độ đơn vị sang tọa độ trong canvas
-    public Entity(Point coordinate , Image img) {
+    public Entity(Point coordinate, Image img) {
         this.coordinate = coordinate;
         this.img = img;
         canvas_coordinate = coordinate.toCanvasCoordinate();

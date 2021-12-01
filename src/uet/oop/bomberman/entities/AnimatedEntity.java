@@ -9,6 +9,7 @@ import uet.oop.bomberman.graphics.Sprite;
 
 public abstract class AnimatedEntity extends Entity {
     protected boolean isMoving = false;
+    protected boolean alive = true;
     protected int animation = 0;
     protected Point typeMove = new Point(0, 0);
 
@@ -44,6 +45,10 @@ public abstract class AnimatedEntity extends Entity {
         img = Sprite.movingSprite(status1, status2, animation, 16).getFxImage();
     }
 
+    public void animation(Sprite status1, Sprite status2, Sprite status3) {
+        img = Sprite.movingSprite(status2, status1, status3, animation, 16).getFxImage();
+    }
+
     public void handleAnimation(Sprite up1, Sprite up2,
                                 Sprite down1, Sprite down2,
                                 Sprite left1, Sprite left2,
@@ -65,6 +70,34 @@ public abstract class AnimatedEntity extends Entity {
                 }
                 break;
             case right:
+                if (isMoving) {
+                    animation(right1, right2);
+                }
+                break;
+            default:
+        };
+        if (animation == 1600) {
+            animation = 0;
+        } else {
+            animation++;
+        }
+    }
+
+    public void handleAnimation(Sprite left1, Sprite left2, Sprite left3,
+                                Sprite right1, Sprite right2, Sprite right3) {
+        switch (direction) {
+            case left:
+                if (isMoving) {
+                    animation(left1, left2, left3);
+                }
+                break;
+            case right:
+                if (isMoving) {
+                    animation(right1, right2, right3);
+                }
+                break;
+            case up:
+            case down:
                 if (isMoving) {
                     animation(right1, right2);
                 }
@@ -105,6 +138,14 @@ public abstract class AnimatedEntity extends Entity {
             return true;
         }
         return false;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 
     public abstract void handleMove();

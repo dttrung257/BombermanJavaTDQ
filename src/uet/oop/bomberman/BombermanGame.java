@@ -71,7 +71,9 @@ public class BombermanGame extends Application {
         newGame.createMap();
         AnimatedEntity bomberman = new Bomber(new Point(1, 1), Sprite.player_right.getFxImage());
         newGame.getEntities().add(bomberman);
+        newGame.setBomberman((Bomber) bomberman);
         moveBomberman(scene);
+        //GamePlay.moveEnemies();
     }
 
     public void moveBomberman(Scene scene) {

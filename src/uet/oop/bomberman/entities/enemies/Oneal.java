@@ -6,9 +6,10 @@ import uet.oop.bomberman.GamePlay;
 import uet.oop.bomberman.entities.AnimatedEntity;
 import uet.oop.bomberman.entities.Point;
 import uet.oop.bomberman.entities.enemies.Enemy;
+import uet.oop.bomberman.entities.staticEntity.Grass;
 import uet.oop.bomberman.graphics.Sprite;
 
-import java.util.Random;
+import java.util.*;
 
 public class Oneal extends Enemy {
     public Oneal(Point coordinate, Image img) {
@@ -16,6 +17,8 @@ public class Oneal extends Enemy {
     }
 
     private int SPEED;
+
+    private Point lastVisited = new Point(0,0);
 
     @Override
     public void update() {
@@ -32,37 +35,31 @@ public class Oneal extends Enemy {
         int bx = GamePlay.getBomberman().getCoordinate().getX();
         int by = GamePlay.getBomberman().getCoordinate().getY();
         Random r = new Random();
-        this.SPEED = r.nextInt(2) + 1;
-        int dir = r.nextInt(12);
-        switch (dir) {
-            case 1:
-            case 2:
-                if (y > by) {
-                    setGoUp();
-                } else if (y < by) {
-                    setGoDown();
-                }
-                break;
-            case 4:
-            case 5:
-                if (x > bx) {
-                    setGoLeft();
-                } else if (x < bx) {
-                    setGoRight();
-                }
-                break;
-            case 7:
-                setGoRight();
-                break;
-            case 8:
-                setGoLeft();
-                break;
-            case 9:
-                setGoUp();
-                break;
-            case 0:
-                setGoDown();
-                break;
+        Random r2 = new Random();
+        this.SPEED = r.nextInt(2) + r2.nextInt(2);
+        int [][]B = new int[13][31];
+        for (int i = 0; i < 13; i++) {
+            for (int j = 0; j < 31; j++) {
+                B[i][j] = 0;
+            }
+        }
+        Point b = GamePlay.getBomberman().getCoordinate();
+        if (x < bx && y < by) {
+            int dx[] = {1, 0, 0, -1};
+            int dy[] = {0, 1, -1, 0};
+            minPath(coordinate, b, B, dx, dy);
+        } else if (x >= bx) {
+            int dx[] = {-1, 0, 0, 1};
+            int dy[] = {0, 1, -1, 0};
+            minPath(coordinate, b, B, dx, dy);
+        } else if (y >= by) {
+            int dx[] = {1, 0, 0, -1};
+            int dy[] = {0, -1, 1, 0};
+            minPath(coordinate, b, B, dx, dy);
+        } else {
+            int dx[] = {-1, 0, 0, 1};
+            int dy[] = {0, -1, 1, 0};
+            minPath(coordinate, b, B, dx, dy);
         }
     }
 
@@ -70,32 +67,36 @@ public class Oneal extends Enemy {
     public void handleMove() {
         int x = 0;
         int y = 0;
-        if ((goUp && typeMove.getX() == 0 && canMove(0, -1)) || typeMove.getY() < 0) {
+        if ((goUp && typeMove.getX() == 0 && canMove(0, -1/*SPEED*/) && canMove(0, -SPEED)) || typeMove.getY() < 0) {
             y = -SPEED;
             if (typeMove.getY() >= 0) {
                 typeMove.setY(typeMove.getY() - Sprite.SCALED_SIZE);
             }
         }
-        if ((goDown && typeMove.getX() == 0 && canMove(0, 1)) || typeMove.getY() > 0) {
+        if ((goDown && typeMove.getX() == 0 && canMove(0, 1/*SPEED*/) && canMove(0, SPEED)) || typeMove.getY() > 0) {
             y = SPEED;
             if (typeMove.getY() <= 0) {
                 typeMove.setY(typeMove.getY() + Sprite.SCALED_SIZE);
             }
         }
-        if ((goLeft && typeMove.getY() == 0 && canMove(-1, 0)) || typeMove.getX() < 0) {
+        if ((goLeft && typeMove.getY() == 0 && canMove(-1/*SPEED*/, 0) && canMove(-SPEED, 0)) || typeMove.getX() < 0) {
             x = -SPEED;
             if (typeMove.getX() >= 0) {
                 typeMove.setX(typeMove.getX() - Sprite.SCALED_SIZE);
             }
         }
-        if ((goRight && typeMove.getY() == 0 && canMove(1, 0)) || typeMove.getX() > 0) {
+        if ((goRight && typeMove.getY() == 0 && canMove(1/*SPEED*/, 0) && canMove(SPEED, 0)) || typeMove.getX() > 0) {
             x = SPEED;
             if (typeMove.getX() <= 0) {
                 typeMove.setX(typeMove.getX() + Sprite.SCALED_SIZE);
             }
         }
         if (typeMove.getX() != 0 || typeMove.getY() != 0) {
-            move(x * SPEED, y * SPEED);
+            if (coordinate.getX() + x * SPEED != lastVisited.getX()
+                || coordinate.getY() + y * SPEED != lastVisited.getY()) {
+                lastVisited = coordinate;
+                move(x * SPEED, y * SPEED);
+            }
             typeMove.setX(typeMove.getX() - x * SPEED);
             typeMove.setY(typeMove.getY() - y * SPEED);
             isMoving = true;
@@ -113,6 +114,41 @@ public class Oneal extends Enemy {
                 direction = AnimatedEntity.Direction.right;
             }
             isMoving = false;
+        }
+    }
+
+    public void minPath(Point o, Point b, int[][] B, int[] dx, int[] dy) {
+        B[b.getY()][b.getX()] = 1;
+        Queue<Point> q = new LinkedList<>();
+        q.add(b);
+        Point oUp = new Point(o.getX(), o.getY() - SPEED);
+        Point oDown = new Point(o.getX(), o.getY() + SPEED);
+        Point oLeft = new Point(o.getX() - SPEED, o.getY());
+        Point oRight = new Point(o.getX() + SPEED, o.getY());
+        Point p;
+        while (!q.isEmpty()) {
+            p = q.poll();
+            for (int i = 0; i < 4; i++) {
+                Point tmp = new Point(p.getX() + dx[i], p.getY() + dy[i]);
+                if (GamePlay.getEntityAtPosition(tmp.getX(), tmp.getY()) instanceof Grass && B[tmp.getY()][tmp.getX()] == 0) {
+                    if (tmp.equals(o)) return;
+                    if (tmp.equals(oUp)) {
+                        setGoUp();
+                        return;
+                    } else if (tmp.equals(oDown)) {
+                        setGoDown();
+                        return;
+                    } else if (tmp.equals(oLeft)) {
+                        setGoLeft();
+                        return;
+                    } else if (tmp.equals(oRight)) {
+                        setGoRight();
+                        return;
+                    }
+                    q.add(tmp);
+                    B[tmp.getY()][tmp.getX()] = 1;
+                }
+            }
         }
     }
 }

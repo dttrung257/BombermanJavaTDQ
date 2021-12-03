@@ -35,4 +35,8 @@ public class Point {
         return new Point((x + Sprite.DEFAULT_SIZE) / Sprite.SCALED_SIZE,
                             (y + Sprite.DEFAULT_SIZE) / Sprite.SCALED_SIZE);
     }
+
+    public boolean equals(Point p) {
+        return (p.x == this.x && p.y == this.y);
+    }
 }

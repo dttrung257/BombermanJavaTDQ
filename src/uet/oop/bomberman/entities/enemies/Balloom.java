@@ -14,8 +14,6 @@ import java.util.Random;
 
 public class Balloom extends Enemy {
     public static final int SPEED = 1;
-    
-    private boolean goUp, goDown, goRight, goLeft;
 
     public Balloom(Point coordinate, Image img) {
         super(coordinate, img);
@@ -35,28 +33,16 @@ public class Balloom extends Enemy {
         int dir = r.nextInt(12);
         switch (dir) {
             case 1:
-                goUp = true;
-                goDown = false;
-                goLeft = false;
-                goRight = false;
+                setGoUp();
                 break;
             case 2:
-                goDown = true;
-                goUp = false;
-                goLeft = false;
-                goRight = false;
+                setGoDown();
                 break;
             case 3:
-                goRight = true;
-                goDown = false;
-                goLeft = false;
-                goUp = false;
+                setGoRight();
                 break;
             case 4:
-                goLeft = true;
-                goDown = false;
-                goUp = false;
-                goRight = false;
+                setGoLeft();
                 break;
         }
     }

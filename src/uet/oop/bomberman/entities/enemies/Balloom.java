@@ -21,30 +21,11 @@ public class Balloom extends Enemy {
 
     @Override
     public void update() {
-        setDirection();
+        randomizeDirection();
         handleMove();
         handleAnimation(Sprite.balloom_left1, Sprite.balloom_left2, Sprite.balloom_left3,
                 Sprite.balloom_right1, Sprite.balloom_right2, Sprite.balloom_right3);
         //stand(Sprite.balloom_right1, Sprite.balloom_right1, Sprite.balloom_left1, Sprite.balloom_right1);
-    }
-
-    public void setDirection() {
-        Random r = new Random();
-        int dir = r.nextInt(12);
-        switch (dir) {
-            case 1:
-                setGoUp();
-                break;
-            case 2:
-                setGoDown();
-                break;
-            case 3:
-                setGoRight();
-                break;
-            case 4:
-                setGoLeft();
-                break;
-        }
     }
 
     @Override

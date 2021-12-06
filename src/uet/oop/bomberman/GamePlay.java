@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GamePlay {
-    public static final int WIDTH = 31;
-    public static final int HEIGHT = 13;
+    public static int WIDTH;
+    public static int HEIGHT;
     private static Scene scene;
     private static GraphicsContext gc;
     private static Canvas canvas;
@@ -47,7 +47,7 @@ public class GamePlay {
 
     public static Entity getEntityAtPosition(int pointX, int pointY) {
         Entity entity = null;
-        for (Entity e : entities) {;
+        for (Entity e : stillObjects) {;
             if (e.getCoordinate().getX() == pointX && e.getCoordinate().getY() == pointY) {
                 entity = e;
                 break;
@@ -57,15 +57,19 @@ public class GamePlay {
     }
 
 
-    public static void createMap() {
+
+    public static void createMap(int level) {
         //bomberman = new Bomber(new Point(1, 1), Sprite.player_right.getFxImage());
         //entities.add(bomberman);
         try {
-            FileInputStream fileInputStream = new FileInputStream("res\\levels\\Level2.txt");
+            FileInputStream fileInputStream = new FileInputStream("res\\levels\\Level" + level + ".txt");
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             int l = bufferedReader.read();
             String line = bufferedReader.readLine();
+            String str[] = line.split(" ");
+            HEIGHT = Integer.parseInt(str[1]);
+            WIDTH = Integer.parseInt(str[2]);
             for (int i = 0; i < HEIGHT; i++) {
                 line = bufferedReader.readLine();
                 for (int j = 0; j < WIDTH; j++) {
@@ -80,42 +84,41 @@ public class GamePlay {
                         case '1':
                             Balloom b = new Balloom(new Point(j, i), Sprite.balloom_right1.getFxImage());
                             enemies.add(b);
-                            object = null;
+                            entities.add(b);
                             object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
                             break;
                         case '2':
                             Oneal o = new Oneal(new Point(j, i), Sprite.oneal_right1.getFxImage());
                             enemies.add(o);
+                            entities.add(o);
                             object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
-                            object = null;
                             break;
                         case '*':
                             object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             break;
                         case 'x':
                             object1 = new Portal(new Point(j, i), Sprite.portal.getFxImage());
-                            stillObjects.add(object1);
                             object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             break;
                         case 'b':
                             object1 = new BombItem(new Point(j, i), Sprite.bomb.getFxImage());
-                            stillObjects.add(object1);
                             object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             break;
                         case 'f':
                             object1 = new FlameItem(new Point(j, i), Sprite.powerup_flames.getFxImage());
-                            stillObjects.add(object1);
                             object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             break;
                         case 's':
                             object1 = new SpeedItem(new Point(j, i), Sprite.powerup_speed.getFxImage());
-                            stillObjects.add(object1);
                             object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             //object2 = new Grass(j, i, Sprite.grass.getFxImage());
                             break;
                         default:
                             object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
                             break;
+                    }
+                    if (object1 != null) {
+                        entities.add(object1);
                     }
                     if (object2 != null) {
                         stillObjects.add(object2);

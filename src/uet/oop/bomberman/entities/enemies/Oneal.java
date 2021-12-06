@@ -35,8 +35,7 @@ public class Oneal extends Enemy {
         int bx = GamePlay.getBomberman().getCoordinate().getX();
         int by = GamePlay.getBomberman().getCoordinate().getY();
         Random r = new Random();
-        Random r2 = new Random();
-        this.SPEED = r.nextInt(2) + r2.nextInt(2);
+        this.SPEED = r.nextInt(2);
         int [][]B = new int[13][31];
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < 31; j++) {
@@ -48,13 +47,13 @@ public class Oneal extends Enemy {
             int dx[] = {1, 0, 0, -1};
             int dy[] = {0, 1, -1, 0};
             minPath(coordinate, b, B, dx, dy);
-        } else if (x >= bx) {
-            int dx[] = {-1, 0, 0, 1};
-            int dy[] = {0, 1, -1, 0};
-            minPath(coordinate, b, B, dx, dy);
-        } else if (y >= by) {
+        } else if (x < bx) {
             int dx[] = {1, 0, 0, -1};
             int dy[] = {0, -1, 1, 0};
+            minPath(coordinate, b, B, dx, dy);
+        } else if (y >= by) {
+            int dx[] = {-1, 0, 0, 1};
+            int dy[] = {0, 1, -1, 0};
             minPath(coordinate, b, B, dx, dy);
         } else {
             int dx[] = {-1, 0, 0, 1};
@@ -119,18 +118,39 @@ public class Oneal extends Enemy {
 
     public void minPath(Point o, Point b, int[][] B, int[] dx, int[] dy) {
         B[b.getY()][b.getX()] = 1;
-        Queue<Point> q = new LinkedList<>();
-        q.add(b);
         Point oUp = new Point(o.getX(), o.getY() - SPEED);
         Point oDown = new Point(o.getX(), o.getY() + SPEED);
         Point oLeft = new Point(o.getX() - SPEED, o.getY());
         Point oRight = new Point(o.getX() + SPEED, o.getY());
         Point p;
+        if (b.equals(o)) return;
+        if (b.equals(oUp)) {
+            setGoUp();
+            return;
+        } else if (b.equals(oDown)) {
+            setGoDown();
+            return;
+        } else if (b.equals(oLeft)) {
+            setGoLeft();
+            return;
+        } else if (b.equals(oRight)) {
+            setGoRight();
+            return;
+        }
+        Queue<Point> q = new LinkedList<>();
+        q.add(b);
+        int num = 0;
         while (!q.isEmpty()) {
             p = q.poll();
             for (int i = 0; i < 4; i++) {
+                num++;
+                if (num > 60) {
+                    randomizeDirection();
+                    return;
+                }
                 Point tmp = new Point(p.getX() + dx[i], p.getY() + dy[i]);
-                if (GamePlay.getEntityAtPosition(tmp.getX(), tmp.getY()) instanceof Grass && B[tmp.getY()][tmp.getX()] == 0) {
+                if (GamePlay.getEntityAtPosition(tmp.getX(), tmp.getY()) instanceof Grass
+                        && B[tmp.getY()][tmp.getX()] == 0) {
                     if (tmp.equals(o)) return;
                     if (tmp.equals(oUp)) {
                         setGoUp();
@@ -150,5 +170,6 @@ public class Oneal extends Enemy {
                 }
             }
         }
+        randomizeDirection();
     }
 }

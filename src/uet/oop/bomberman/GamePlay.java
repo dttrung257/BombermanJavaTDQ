@@ -3,9 +3,6 @@ package uet.oop.bomberman;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import uet.oop.bomberman.entities.AnimatedEntity;
 import uet.oop.bomberman.entities.Bomber;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
@@ -15,15 +12,11 @@ import uet.oop.bomberman.entities.enemies.Oneal;
 import uet.oop.bomberman.entities.item.BombItem;
 import uet.oop.bomberman.entities.item.FlameItem;
 import uet.oop.bomberman.entities.item.SpeedItem;
-import uet.oop.bomberman.entities.staticEntity.Brick;
-import uet.oop.bomberman.entities.staticEntity.Grass;
-import uet.oop.bomberman.entities.staticEntity.Portal;
-import uet.oop.bomberman.entities.staticEntity.Wall;
+import uet.oop.bomberman.entities.staticEntity.*;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +29,8 @@ public class GamePlay {
     private static Canvas canvas;
     private static Bomber bomberman;
     private static List<Entity> entities = new ArrayList<>();
+    public static List<Bomb> bombs = new ArrayList<>();
+    public static List<Flame> flames = new ArrayList<>();
     private static List<Entity> stillObjects = new ArrayList<>();
     private static List<Enemy> enemies = new ArrayList<>();
 
@@ -55,8 +50,6 @@ public class GamePlay {
         }
         return entity;
     }
-
-
 
     public static void createMap(int level) {
         //bomberman = new Bomber(new Point(1, 1), Sprite.player_right.getFxImage());
@@ -141,6 +134,7 @@ public class GamePlay {
     public void update() {
         entities.forEach(Entity::update);
         enemies.forEach(Enemy::update);
+        bombs.forEach(Bomb::update);
     }
 
     public void render() {
@@ -148,6 +142,8 @@ public class GamePlay {
         if (bomberman.isAlive()) {
             stillObjects.forEach(g -> g.render(gc));
             entities.forEach(g -> g.render(gc));
+            bombs.forEach(g -> g.render(gc));
+            flames.forEach(g -> g.render(gc));
             enemies.forEach(g -> g.render(gc));
         }
     }

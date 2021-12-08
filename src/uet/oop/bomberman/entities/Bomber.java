@@ -4,16 +4,24 @@ import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.GamePlay;
 import uet.oop.bomberman.entities.enemies.Enemy;
+import uet.oop.bomberman.entities.item.BombItem;
+import uet.oop.bomberman.entities.staticEntity.Bomb;
+import uet.oop.bomberman.entities.staticEntity.Grass;
 import uet.oop.bomberman.graphics.Sprite;
 
-public class Bomber extends AnimatedEntity {
+import java.util.ArrayList;
+import java.util.List;
 
+import static uet.oop.bomberman.BombermanGame.createBomb;
+
+public class Bomber extends AnimatedEntity {
     public Bomber(Point coordinate, Image img) {
         super(coordinate, img);
     }
 
     @Override
     public void update() {
+        createBomb();
         handleMove();
         checkEnemies();
         handleAnimation(Sprite.player_up_1, Sprite.player_up_2,
@@ -95,6 +103,13 @@ public class Bomber extends AnimatedEntity {
         return super.canMove(x, y);
     }
 
+    public void createBomb() {
+        if(BombermanGame.createBomb) {
+            Bomb bomb = new Bomb(coordinate, Sprite.bomb_2.getFxImage(), System.currentTimeMillis());
+            GamePlay.bombs.add(bomb);
+            BombermanGame.createBomb = false;
+        }
+    }
     public Image getImg() {
         return img;
     }

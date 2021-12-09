@@ -11,6 +11,7 @@ import uet.oop.bomberman.entities.enemies.Enemy;
 import uet.oop.bomberman.entities.enemies.Oneal;
 import uet.oop.bomberman.entities.item.BombItem;
 import uet.oop.bomberman.entities.item.FlameItem;
+import uet.oop.bomberman.entities.item.HiddenItem;
 import uet.oop.bomberman.entities.item.SpeedItem;
 import uet.oop.bomberman.entities.staticEntity.*;
 import uet.oop.bomberman.graphics.Sprite;
@@ -30,9 +31,9 @@ public class GamePlay {
     private static Bomber bomberman;
     private static List<Entity> entities = new ArrayList<>();
     public static List<Bomb> bombs = new ArrayList<>();
-    public static List<Flame> flames = new ArrayList<>();
     private static List<Entity> stillObjects = new ArrayList<>();
     private static List<Enemy> enemies = new ArrayList<>();
+    public static List<Integer> opened = new ArrayList<>();
 
     public GamePlay(Canvas canvas, GraphicsContext gc, Scene scene) {
         this.canvas = canvas;
@@ -42,13 +43,21 @@ public class GamePlay {
 
     public static Entity getEntityAtPosition(int pointX, int pointY) {
         Entity entity = null;
-        for (Entity e : stillObjects) {;
+        for (Entity e : entities) {;
             if (e.getCoordinate().getX() == pointX && e.getCoordinate().getY() == pointY) {
                 entity = e;
-                break;
             }
         }
         return entity;
+    }
+
+    public static int getBrickIndex(Point p) {
+        for (int i = 0; i < entities.size(); i++) {
+            if (entities.get(i).getCoordinate().equals(p)) {
+                return i + 1;
+            }
+        }
+        return 0;
     }
 
     public static void createMap(int level) {
@@ -87,6 +96,7 @@ public class GamePlay {
                             object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
                             break;
                         case '*':
+                            object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
                             object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             break;
                         case 'x':
@@ -134,17 +144,31 @@ public class GamePlay {
     public void update() {
         entities.forEach(Entity::update);
         enemies.forEach(Enemy::update);
-        bombs.forEach(Bomb::update);
+        Explosion();
+        int temp = 0;
+        for(int i = 0; i < opened.size(); i++) {
+            entities.remove((int) opened.get(i) - temp);
+            temp++;
+        }
+        opened.clear();
     }
 
     public void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         if (bomberman.isAlive()) {
-            stillObjects.forEach(g -> g.render(gc));
             entities.forEach(g -> g.render(gc));
             bombs.forEach(g -> g.render(gc));
-            flames.forEach(g -> g.render(gc));
             enemies.forEach(g -> g.render(gc));
+        }
+    }
+
+    public void Explosion() {
+        bombs.forEach(Bomb::update);
+        bombs.forEach(g -> g.getFlames().forEach(h -> h.render(gc)));
+        for(int i = 0; i < bombs.size(); i++) {
+            if(!bombs.get(i).isWaitingExplosion()) {
+                bombs.remove(i);
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities.enemies;
 
 import javafx.scene.image.Image;
+import uet.oop.bomberman.GamePlay;
 import uet.oop.bomberman.entities.AnimatedEntity;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
@@ -9,6 +10,8 @@ import uet.oop.bomberman.graphics.Sprite;
 import java.util.Random;
 
 public abstract class Enemy extends AnimatedEntity {
+    protected int dying = 0;
+
     public Enemy(Point coordinate, Image img) {
         super(coordinate, img);
     }
@@ -17,6 +20,12 @@ public abstract class Enemy extends AnimatedEntity {
 
     @Override
     public void update() {
+        if (!alive) {
+            handleDieAnimation();
+            if (dying == 60) {
+                GamePlay.removeEnemy(this);
+            }
+        }
     }
 
     public void setGoDown() {
@@ -66,4 +75,6 @@ public abstract class Enemy extends AnimatedEntity {
                 break;
         }
     }
+
+    public abstract void handleDieAnimation();
 }

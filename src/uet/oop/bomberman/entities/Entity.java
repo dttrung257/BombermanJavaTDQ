@@ -13,6 +13,12 @@ public abstract class Entity {
 
     protected Image img;
 
+    public enum Direction {
+        up, down, left, right, center, other
+    }
+
+    public Direction direction = Direction.other;
+
     //Khởi tạo đối tượng, chuyển từ tọa độ đơn vị sang tọa độ trong canvas
     public Entity(Point coordinate, Image img) {
         this.coordinate = coordinate;

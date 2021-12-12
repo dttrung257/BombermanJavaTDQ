@@ -10,14 +10,12 @@ import uet.oop.bomberman.graphics.Sprite;
 public abstract class AnimatedEntity extends Entity {
     protected boolean isMoving = false;
     protected boolean alive = true;
+    protected boolean caughtFlame = false;
     protected int animation = 0;
-    protected Point typeMove = new Point(0, 0);
+    protected int speed = 1;
+    protected Point distance = new Point(0, 0);
 
-    public enum Direction {
-        up, down, left, right, other
-    }
 
-    public Direction direction = Direction.other;
 
     public AnimatedEntity(Point coordinate, Image img) {
         super(coordinate, img);
@@ -27,16 +25,16 @@ public abstract class AnimatedEntity extends Entity {
         canvas_coordinate.setX(canvas_coordinate.getX() + x);
         canvas_coordinate.setY(canvas_coordinate.getY() + y);
         coordinate = canvas_coordinate.toCoordinate();
-        if (typeMove.getY() < 0) {
+        if (distance.getY() < 0) {
             direction = Direction.up;
         }
-        if (typeMove.getY() > 0) {
+        if (distance.getY() > 0) {
             direction = Direction.down;
         }
-        if (typeMove.getX() < 0) {
+        if (distance.getX() < 0) {
             direction = Direction.left;
         }
-        if (typeMove.getX() > 0) {
+        if (distance.getX() > 0) {
             direction = Direction.right;
         }
     }
@@ -49,7 +47,7 @@ public abstract class AnimatedEntity extends Entity {
         img = Sprite.movingSprite(status2, status1, status3, animation, 16).getFxImage();
     }
 
-    public void handleAnimation(Sprite up1, Sprite up2,
+    public void displayAnimation(Sprite up1, Sprite up2,
                                 Sprite down1, Sprite down2,
                                 Sprite left1, Sprite left2,
                                 Sprite right1, Sprite right2) {
@@ -75,11 +73,6 @@ public abstract class AnimatedEntity extends Entity {
                 }
                 break;
             default:
-        };
-        if (animation == 1600) {
-            animation = 0;
-        } else {
-            animation++;
         }
     }
 
@@ -140,8 +133,19 @@ public abstract class AnimatedEntity extends Entity {
         return false;
     }
 
+    public void die() {
+        if (alive) {
+            this.alive = false;
+            animation = 0;
+        }
+    }
+
     public boolean isAlive() {
         return alive;
+    }
+
+    public boolean isCaughtFlame() {
+        return caughtFlame;
     }
 
     public void setAlive(boolean alive) {
@@ -149,4 +153,6 @@ public abstract class AnimatedEntity extends Entity {
     }
 
     public abstract void handleMove();
+
+    public abstract void handleCollision();
 }

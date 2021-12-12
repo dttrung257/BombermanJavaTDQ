@@ -4,7 +4,7 @@ import javafx.scene.image.Image;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
 
-public class HiddenItem extends Entity {
+public abstract class HiddenItem extends Entity {
     public HiddenItem(Point coordinate, Image img) {
         super(coordinate, img);
     }
@@ -13,5 +13,7 @@ public class HiddenItem extends Entity {
     public void update() {
 
     }
+
+    public abstract void handleItem();
 
 }

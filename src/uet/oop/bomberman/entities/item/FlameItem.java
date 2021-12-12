@@ -12,4 +12,9 @@ public class FlameItem extends HiddenItem {
     @Override
     public void update() {
     }
+
+    @Override
+    public void handleItem() {
+
+    }
 }

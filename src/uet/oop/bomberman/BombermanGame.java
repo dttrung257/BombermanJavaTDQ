@@ -18,7 +18,7 @@ public class BombermanGame extends Application {
     private GraphicsContext gc;
     private Canvas canvas;
 
-    public static boolean goUp, goDown, goRight, goLeft, createBomb = false;
+    public static boolean goUp, goDown, goRight, goLeft, createBomb;
 
     public static void main(String[] args) {
         Application.launch();
@@ -49,10 +49,7 @@ public class BombermanGame extends Application {
             }
         };
         Timer.start();
-        newGame.createMap(7);
-        AnimatedEntity bomberman = new Bomber(new Point(1, 1), Sprite.player_right.getFxImage());
-        newGame.getEntities().add(bomberman);
-        newGame.setBomberman((Bomber) bomberman);
+        newGame.createMap(1);
         moveBomberman(scene);
         //GamePlay.moveEnemies();
     }
@@ -72,6 +69,9 @@ public class BombermanGame extends Application {
                 case LEFT:
                     goLeft = true;
                     break;
+                case SPACE:
+                    createBomb = true;
+                    break;
             };
         });
         scene.setOnKeyReleased(event -> {
@@ -89,7 +89,7 @@ public class BombermanGame extends Application {
                     goLeft = false;
                     break;
                 case SPACE:
-                    createBomb = true;
+                    createBomb = false;
                     break;
             };
         });

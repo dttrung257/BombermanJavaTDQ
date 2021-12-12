@@ -15,4 +15,9 @@ public class BombItem extends HiddenItem {
     @Override
     public void update() {
     }
+
+    @Override
+    public void handleItem() {
+
+    }
 }

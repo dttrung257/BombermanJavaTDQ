@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.List;
 
 public class GamePlay {
@@ -30,10 +32,15 @@ public class GamePlay {
     private static Canvas canvas;
     private static Bomber bomberman;
     private static List<Entity> entities = new ArrayList<>();
-    public static List<Bomb> bombs = new ArrayList<>();
-    private static List<Entity> stillObjects = new ArrayList<>();
-    private static List<Enemy> enemies = new ArrayList<>();
-    public static List<Integer> opened = new ArrayList<>();
+    private static List<Flame> flames = new ArrayList<>();
+    private static List<Entity> bombs = new ArrayList<>();
+    private static List<Entity> walls = new ArrayList<>();
+    private static List<Entity> portals = new ArrayList<>();
+    private static List<Entity> bricks = new ArrayList<>();
+    private static List<Entity> items = new ArrayList<>();
+    private static List<Entity> enemies = new ArrayList<>();
+    private static List<Entity> grasses = new ArrayList<>();
+    public static int gameLevel;
 
     public GamePlay(Canvas canvas, GraphicsContext gc, Scene scene) {
         this.canvas = canvas;
@@ -42,10 +49,48 @@ public class GamePlay {
     }
 
     public static Entity getEntityAtPosition(int pointX, int pointY) {
+        Entity entity;
+        entity = checkByType(walls, pointX, pointY);
+        if (entity != null) {
+            return entity;
+        }
+        entity = checkByType(bricks, pointX, pointY);
+        if (entity != null) {
+            return entity;
+        }
+
+        entity = checkByType(bombs, pointX, pointY);
+        if (entity != null) {
+            return entity;
+        }
+        entity = checkByType(portals, pointX, pointY);
+        if (entity != null) {
+            return entity;
+        }
+        entity = checkByType(items, pointX, pointY);
+        if (entity != null) {
+            return entity;
+        }
+        entity = checkByType(enemies, pointX, pointY);
+        if (entity != null) {
+            return entity;
+        }
+        if (bomberman != null
+                && bomberman.getCoordinate().getX() == pointX
+                && bomberman.getCoordinate().getY() == pointY) {
+            entity = bomberman;
+        }
+        return entity;
+    }
+
+    public static Entity checkByType(List<Entity> entities, int pointX, int pointY) {
+        Iterator<Entity> itr = entities.iterator();
+        Entity cur;
         Entity entity = null;
-        for (Entity e : entities) {;
-            if (e.getCoordinate().getX() == pointX && e.getCoordinate().getY() == pointY) {
-                entity = e;
+        while (itr.hasNext()) {
+            cur = itr.next();
+            if (cur.getCoordinate().getY() == pointY && cur.getCoordinate().getX() == pointX) {
+                entity = cur;
             }
         }
         return entity;
@@ -60,117 +105,138 @@ public class GamePlay {
         return 0;
     }
 
+    public static void resetData() {
+        entities = new ArrayList<>();
+        flames = new ArrayList<>();
+        bombs = new ArrayList<>();
+        walls = new ArrayList<>();
+        portals = new ArrayList<>();
+        bricks = new ArrayList<>();
+        items = new ArrayList<>();
+        enemies = new ArrayList<>();
+        grasses = new ArrayList<>();
+    }
+
     public static void createMap(int level) {
         //bomberman = new Bomber(new Point(1, 1), Sprite.player_right.getFxImage());
         //entities.add(bomberman);
+        resetData();
         try {
             FileInputStream fileInputStream = new FileInputStream("res\\levels\\Level" + level + ".txt");
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             int l = bufferedReader.read();
             String line = bufferedReader.readLine();
-            String str[] = line.split(" ");
+            String[] str = line.split(" ");
             HEIGHT = Integer.parseInt(str[1]);
             WIDTH = Integer.parseInt(str[2]);
             for (int i = 0; i < HEIGHT; i++) {
                 line = bufferedReader.readLine();
                 for (int j = 0; j < WIDTH; j++) {
-                    Entity object = null;
-                    Entity object1 = null;
-                    Entity object2 = null;
+                    grasses.add(new Grass(new Point(j, i), Sprite.grass.getFxImage()));
+                    entities.add(new Grass(new Point(j, i), Sprite.grass.getFxImage()));
                     char ch = line.charAt(j);
                     switch (ch) {
+                        case 'p':
+                            bomberman = new Bomber(new Point(j, i), Sprite.player_right.getFxImage());
+                            entities.add(bomberman);
+                            break;
                         case '#':
-                            object = new Wall(new Point(j, i), Sprite.wall.getFxImage());
+                            Entity wall = new Wall(new Point(j, i), Sprite.wall.getFxImage());
+                            walls.add(wall);
+                            entities.add(wall);
                             break;
                         case '1':
-                            Balloom b = new Balloom(new Point(j, i), Sprite.balloom_right1.getFxImage());
-                            enemies.add(b);
-                            entities.add(b);
-                            object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
+                            Entity balloom = new Balloom(new Point(j, i), Sprite.balloom_right1.getFxImage());
+                            enemies.add(balloom);
+                            entities.add(balloom);
                             break;
                         case '2':
-                            Oneal o = new Oneal(new Point(j, i), Sprite.oneal_right1.getFxImage());
-                            enemies.add(o);
-                            entities.add(o);
-                            object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
+                            Entity oneal =  new Oneal(new Point(j, i), Sprite.oneal_right1.getFxImage());
+                            enemies.add(oneal);
+                            entities.add(oneal);
                             break;
                         case '*':
-                            object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
-                            object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
+                            Entity brick = new Brick(new Point(j, i), Sprite.brick.getFxImage());
+                            bricks.add(brick);
+                            entities.add(brick);
                             break;
                         case 'x':
-                            object1 = new Portal(new Point(j, i), Sprite.portal.getFxImage());
-                            object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
+                            Entity portal = new Portal(new Point(j, i), Sprite.portal.getFxImage());
+                            Entity br = new Brick(new Point(j, i), Sprite.brick.getFxImage());
+                            portals.add(portal);
+                            bricks.add(br);
+                            entities.add(portal);
+                            entities.add(br);
                             break;
                         case 'b':
-                            object1 = new BombItem(new Point(j, i), Sprite.bomb.getFxImage());
-                            object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
+                            Entity bombItem = new BombItem(new Point(j, i), Sprite.bomb.getFxImage());
+                            Entity brick1 = new Brick(new Point(j, i), Sprite.brick.getFxImage());
+                            items.add(bombItem);
+                            bricks.add(brick1);
+                            entities.add(bombItem);
+                            entities.add(brick1);
                             break;
                         case 'f':
-                            object1 = new FlameItem(new Point(j, i), Sprite.powerup_flames.getFxImage());
-                            object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
+                            Entity flameItem = new FlameItem(new Point(j, i), Sprite.powerup_flames.getFxImage());
+                            Entity brick2 = new Brick(new Point(j, i), Sprite.brick.getFxImage());
+                            items.add(flameItem);
+                            bricks.add(brick2);
+                            entities.add(flameItem);
+                            entities.add(brick2);
                             break;
                         case 's':
-                            object1 = new SpeedItem(new Point(j, i), Sprite.powerup_speed.getFxImage());
-                            object = new Brick(new Point(j, i), Sprite.brick.getFxImage());
-                            //object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                            Entity speedItem = new SpeedItem(new Point(j, i), Sprite.powerup_speed.getFxImage());
+                            Entity brick3 = new Brick(new Point(j, i), Sprite.brick.getFxImage());
+                            items.add(speedItem);
+                            bricks.add(brick3);
+                            entities.add(speedItem);
+                            entities.add(brick3);
                             break;
                         default:
-                            object2 = new Grass(new Point(j, i), Sprite.grass.getFxImage());
-                            break;
-                    }
-                    if (object1 != null) {
-                        entities.add(object1);
-                    }
-                    if (object2 != null) {
-                        stillObjects.add(object2);
-                        entities.add(object2);
-                    }
-                    if (object != null) {
-                        stillObjects.add(object);
-                        entities.add(object);
                     }
                 }
             }
             bufferedReader.close();
             inputStreamReader.close();
             fileInputStream.close();
+            gameLevel = level;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     public void update() {
-        entities.forEach(Entity::update);
-        enemies.forEach(Enemy::update);
-        Explosion();
-        int temp = 0;
-        for(int i = 0; i < opened.size(); i++) {
-            entities.remove((int) opened.get(i) - temp);
-            temp++;
+        if (bomberman != null) {
+            bomberman.update();
         }
-        opened.clear();
+        bricks.forEach(Entity::update);
+        enemies.forEach(Entity::update);
+        if (bombs.size() != 0) {
+            bombs.forEach(Entity::update);
+        }
+        if (flames.size() != 0) {
+            flames.forEach(Flame::update);
+        }
     }
 
     public void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        if (bomberman.isAlive()) {
-            entities.forEach(g -> g.render(gc));
-            bombs.forEach(g -> g.render(gc));
-            enemies.forEach(g -> g.render(gc));
+        grasses.forEach(grass -> grass.render(gc));
+        walls.forEach(wall -> wall.render(gc));
+        portals.forEach(portal -> portal.render(gc));
+        items.forEach(item -> item.render(gc));
+        for (Flame flame : flames) {
+            flame.get_flameSegments().forEach(flameSegment -> flameSegment.render(gc));
+        }
+        bricks.forEach(brick -> brick.render(gc));
+        enemies.forEach(enemy -> enemy.render(gc));
+        bombs.forEach(g -> g.render(gc));
+        if (bomberman != null) {
+            bomberman.render(gc);
         }
     }
 
-    public void Explosion() {
-        bombs.forEach(Bomb::update);
-        bombs.forEach(g -> g.getFlames().forEach(h -> h.render(gc)));
-        for(int i = 0; i < bombs.size(); i++) {
-            if(!bombs.get(i).isWaitingExplosion()) {
-                bombs.remove(i);
-            }
-        }
-    }
 
     public static List<Entity> getEntities() {
         return entities;
@@ -184,7 +250,34 @@ public class GamePlay {
         GamePlay.bomberman = bomberman;
     }
 
-    public static List<Enemy> getEnemies() {
+    public static void setFlame(Flame flame) {
+        flames.add(flame);
+    }
+
+    public static void removeFlame() {
+        flames.remove(0);
+    }
+
+    public static void destroyBrick(Brick brick) {
+        bricks.remove(brick);
+    }
+
+    public static void setBomb(Bomb bomb) {
+        bombs.add(bomb);
+    }
+
+    public static void removeBomb() {
+        bombs.remove(0);
+        if (bomberman != null) {
+            bomberman.addBomb();
+        }
+    }
+
+    public static void removeEnemy(Enemy enemy) {
+        enemies.remove(enemy);
+    }
+
+    public static List<Entity> getEnemies() {
         return enemies;
     }
 }

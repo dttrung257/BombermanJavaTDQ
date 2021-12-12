@@ -21,6 +21,7 @@ public class Balloom extends Enemy {
 
     @Override
     public void update() {
+        super.update();
         randomizeDirection();
         handleMove();
         handleAnimation(Sprite.balloom_left1, Sprite.balloom_left2, Sprite.balloom_left3,
@@ -32,49 +33,58 @@ public class Balloom extends Enemy {
     public void handleMove() {
         int x = 0;
         int y = 0;
-        if ((goUp && typeMove.getX() == 0 && canMove(0, -1)) || typeMove.getY() < 0) {
+        if ((goUp && distance.getX() == 0 && canMove(0, -1)) || distance.getY() < 0) {
             y = -SPEED;
-            if (typeMove.getY() >= 0) {
-                typeMove.setY(typeMove.getY() - Sprite.SCALED_SIZE);
+            if (distance.getY() >= 0) {
+                distance.setY(distance.getY() - Sprite.SCALED_SIZE);
             }
         }
-        if ((goDown && typeMove.getX() == 0 && canMove(0, 1)) || typeMove.getY() > 0) {
+        if ((goDown && distance.getX() == 0 && canMove(0, 1)) || distance.getY() > 0) {
             y = SPEED;
-            if (typeMove.getY() <= 0) {
-                typeMove.setY(typeMove.getY() + Sprite.SCALED_SIZE);
+            if (distance.getY() <= 0) {
+                distance.setY(distance.getY() + Sprite.SCALED_SIZE);
             }
         }
-        if ((goLeft && typeMove.getY() == 0 && canMove(-1, 0)) || typeMove.getX() < 0) {
+        if ((goLeft && distance.getY() == 0 && canMove(-1, 0)) || distance.getX() < 0) {
             x = -SPEED;
-            if (typeMove.getX() >= 0) {
-                typeMove.setX(typeMove.getX() - Sprite.SCALED_SIZE);
+            if (distance.getX() >= 0) {
+                distance.setX(distance.getX() - Sprite.SCALED_SIZE);
             }
         }
-        if ((goRight && typeMove.getY() == 0 && canMove(1, 0)) || typeMove.getX() > 0) {
+        if ((goRight && distance.getY() == 0 && canMove(1, 0)) || distance.getX() > 0) {
             x = SPEED;
-            if (typeMove.getX() <= 0) {
-                typeMove.setX(typeMove.getX() + Sprite.SCALED_SIZE);
+            if (distance.getX() <= 0) {
+                distance.setX(distance.getX() + Sprite.SCALED_SIZE);
             }
         }
-        if (typeMove.getX() != 0 || typeMove.getY() != 0) {
+        if (distance.getX() != 0 || distance.getY() != 0) {
             move(x * SPEED, y * SPEED);
-            typeMove.setX(typeMove.getX() - x * SPEED);
-            typeMove.setY(typeMove.getY() - y * SPEED);
+            distance.setX(distance.getX() - x * SPEED);
+            distance.setY(distance.getY() - y * SPEED);
             isMoving = true;
         } else {
             if (goUp) {
-                direction = AnimatedEntity.Direction.up;
+                direction = Direction.up;
             }
             if (goDown) {
-                direction = AnimatedEntity.Direction.down;
+                direction = Direction.down;
             }
             if (goLeft) {
-                direction = AnimatedEntity.Direction.left;
+                direction = Direction.left;
             }
             if (goRight) {
-                direction = AnimatedEntity.Direction.right;
+                direction = Direction.right;
             }
             isMoving = false;
         }
+    }
+
+    @Override
+    public void handleCollision() {}
+
+    @Override
+    public void handleDieAnimation() {
+        img = Sprite.balloom_dead.getFxImage();
+        dying++;
     }
 }

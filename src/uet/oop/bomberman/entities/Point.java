@@ -28,12 +28,12 @@ public class Point {
     }
 
     public Point toCanvasCoordinate() {
-        return new Point(x * Sprite.SCALED_SIZE, y * Sprite.SCALED_SIZE);
+        return new Point(x * Sprite.SCALED_SIZE, (y + 1) * Sprite.SCALED_SIZE);
     }
 
     public Point toCoordinate() {
         return new Point((x + Sprite.DEFAULT_SIZE) / Sprite.SCALED_SIZE,
-                            (y + Sprite.DEFAULT_SIZE) / Sprite.SCALED_SIZE);
+                            (y + Sprite.DEFAULT_SIZE) / Sprite.SCALED_SIZE - 1);
     }
 
     public boolean equals(Point p) {

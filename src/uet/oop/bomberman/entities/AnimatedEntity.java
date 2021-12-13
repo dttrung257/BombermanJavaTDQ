@@ -7,6 +7,8 @@ import uet.oop.bomberman.entities.staticEntity.Brick;
 import uet.oop.bomberman.entities.staticEntity.Wall;
 import uet.oop.bomberman.graphics.Sprite;
 
+import static uet.oop.bomberman.GamePlay.score;
+
 public abstract class AnimatedEntity extends Entity {
     protected boolean isMoving = false;
     protected boolean alive = true;
@@ -132,12 +134,7 @@ public abstract class AnimatedEntity extends Entity {
         return false;
     }
 
-    public void die() {
-        if (alive) {
-            this.alive = false;
-            animation = 0;
-        }
-    }
+    public abstract void die();
 
     public boolean isAlive() {
         return alive;

@@ -11,6 +11,7 @@ import uet.oop.bomberman.entities.item.SpeedItem;
 import uet.oop.bomberman.entities.staticEntity.*;
 import uet.oop.bomberman.graphics.Sprite;
 
+import static java.lang.Thread.sleep;
 import static uet.oop.bomberman.GamePlay.getEntityAtPosition;
 import static uet.oop.bomberman.entities.staticEntity.Bomb.setRangeOfFlame;
 
@@ -30,8 +31,8 @@ public class Bomber extends AnimatedEntity {
         handleAnimation();
         stand(Sprite.player_up, Sprite.player_down, Sprite.player_left, Sprite.player_right);
         handleCollision();
-        if (bomberLife == 0) {
-            System.exit(0);
+        if (bomberLife <= 0) {
+            //System.exit(0);
         }
     }
 
@@ -112,10 +113,7 @@ public class Bomber extends AnimatedEntity {
             GamePlay.removeItem(coordinate);
         }
         if (e instanceof Enemy) {
-            System.out.println("a");
-            if (bomberLife > 1) {
-                bomberLife--;
-            }
+            die();
         }
     }
 
@@ -132,6 +130,28 @@ public class Bomber extends AnimatedEntity {
             bomb--;
             length = 10;
         }
+    }
+
+    @Override
+    public void die() {
+        if (alive) {
+            alive = false;
+            animation = 0;
+        }
+        /*try {
+            sleep(1000);
+        } catch (Exception e) {
+
+        }*/
+        Point p = new Point(Sprite.SCALED_SIZE, 2 * Sprite.SCALED_SIZE);
+        if (canvas_coordinate.equals(p)) {
+            setCanvas_coordinate(new Point(3 * Sprite.SCALED_SIZE, 3 * Sprite.SCALED_SIZE));
+        } else {
+            setCanvas_coordinate(p);
+        }
+        setCoordinate(canvas_coordinate.toCoordinate());
+        bomberLife--;
+        alive = true;
     }
 
     @Override

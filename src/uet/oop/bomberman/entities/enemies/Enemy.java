@@ -76,5 +76,14 @@ public abstract class Enemy extends AnimatedEntity {
         }
     }
 
+    @Override
+    public void die() {
+        if (alive) {
+            this.alive = false;
+            animation = 0;
+            GamePlay.score += 100;
+        }
+    }
+
     public abstract void handleDieAnimation();
 }

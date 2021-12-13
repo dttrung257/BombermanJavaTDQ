@@ -82,9 +82,6 @@ public class FlameSegment extends StaticEntity {
         Entity entity = GamePlay.getEntityAtPosition(coordinate.getX(), coordinate.getY());
         if (entity instanceof AnimatedEntity) {
             if (!((AnimatedEntity) entity).isCaughtFlame()) {
-                if (entity instanceof Bomber && ((Bomber) entity).isAlive()) {
-                    Bomber.bomberLife--;
-                }
                 ((AnimatedEntity) entity).die();
             }
         }

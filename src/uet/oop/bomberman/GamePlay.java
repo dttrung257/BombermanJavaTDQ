@@ -39,6 +39,8 @@ public class GamePlay {
     private static List<Entity> enemies = new ArrayList<>();
     private static List<Entity> grasses = new ArrayList<>();
     public static int gameLevel;
+    public static boolean paused = false;
+    public static int score = 0;
 
     public GamePlay(Canvas canvas, GraphicsContext gc, Scene scene) {
         this.canvas = canvas;
@@ -47,7 +49,7 @@ public class GamePlay {
     }
 
     public static Entity getEntityAtPosition(int pointX, int pointY) {
-        Entity entity;
+        Entity entity = null;
         entity = checkByType(walls, pointX, pointY);
         if (entity != null) {
             return entity;
@@ -197,13 +199,15 @@ public class GamePlay {
 
     public void update() {
         try {
-            if (bomberman != null) {
-                bomberman.update();
+            if (!paused) {
+                if (bomberman != null) {
+                    bomberman.update();
+                }
+                bricks.forEach(Entity::update);
+                enemies.forEach(Entity::update);
+                bombs.forEach(Entity::update);
+                flames.forEach(Flame::update);
             }
-            bricks.forEach(Entity::update);
-            enemies.forEach(Entity::update);
-            bombs.forEach(Entity::update);
-            flames.forEach(Flame::update);
         } catch (Exception e) {
 
         }

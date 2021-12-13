@@ -145,12 +145,12 @@ public class Oneal extends Enemy {
             p = q.poll();
             for (int i = 0; i < 4; i++) {
                 num++;
-                if (num > 60) {
+                /**if (num > 60) {
                     randomizeDirection();
                     return;
-                }
+                }*/
                 Point tmp = new Point(p.getX() + dx[i], p.getY() + dy[i]);
-                if (GamePlay.getEntityAtPosition(tmp.getX(), tmp.getY()) instanceof Grass
+                if (GamePlay.getEntityAtPosition(tmp.getX(), tmp.getY()) == null
                         && B[tmp.getY()][tmp.getX()] == 0) {
                     if (tmp.equals(o)) return;
                     if (tmp.equals(oUp)) {

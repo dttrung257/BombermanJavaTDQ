@@ -1,9 +1,7 @@
 package uet.oop.bomberman.entities.staticEntity;
 
 import javafx.scene.image.Image;
-import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.GamePlay;
-import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
 import uet.oop.bomberman.graphics.Sprite;
 
@@ -31,7 +29,7 @@ public class Brick extends StaticEntity {
     }
 
     public void handleAnimation(Sprite sprite1, Sprite sprite2, Sprite sprite3) {
-        img = Sprite.movingSprite(sprite1, sprite2, sprite3, destroying, 10).getFxImage();
+        img = Sprite.movingSprite(sprite1, sprite2, sprite3, destroying, 30).getFxImage();
         destroying++;
     }
 }

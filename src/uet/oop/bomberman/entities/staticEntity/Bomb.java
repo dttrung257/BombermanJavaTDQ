@@ -1,17 +1,13 @@
 package uet.oop.bomberman.entities.staticEntity;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.GamePlay;
-import uet.oop.bomberman.entities.AnimatedEntity;
-import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Bomb extends StaticEntity {
     protected int timeExplode = 120;
-    protected static int rangeOfFlame = 2;
+    protected static int rangeOfFlame = 1;
     protected int animate = 0;
 
     public Bomb(Point coordinate, Image img) {
@@ -20,20 +16,20 @@ public class Bomb extends StaticEntity {
 
     @Override
     public void update() {
-        handleAnimation(Sprite.bomb, Sprite.bomb_1, Sprite.bomb_2);
+        handleAnimation(Sprite.bomb_1, Sprite.bomb, Sprite.bomb_2);
+        timeExplode--;
         if (timeExplode < 0) {
             explode();
         }
     }
 
     public void handleAnimation(Sprite sprite1, Sprite sprite2, Sprite sprite3) {
-        img = Sprite.movingSprite(sprite1, sprite2, sprite3, animate, 30).getFxImage();
-        if (animate < 1600) {
+        img = Sprite.movingSprite(sprite1, sprite2, sprite3, animate, 50).getFxImage();
+        if (animate > 49) {
             animate = 0;
         } else {
             animate++;
         }
-        timeExplode--;
     }
 
     protected void explode() {
@@ -41,7 +37,15 @@ public class Bomb extends StaticEntity {
         GamePlay.removeBomb();
     }
 
-    public static void setRangeOfFlame(int rangeOfFlame) {
-        Bomb.rangeOfFlame = rangeOfFlame;
+    public static void setRangeOfFlame(int range) {
+        if(range != 0) {
+            rangeOfFlame = range;
+        } else {
+            rangeOfFlame++;
+        }
+    }
+
+    public static int getRangeOfFlame() {
+        return rangeOfFlame;
     }
 }

@@ -4,16 +4,20 @@ import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.GamePlay;
 import uet.oop.bomberman.entities.enemies.Enemy;
+import uet.oop.bomberman.entities.item.BombItem;
+import uet.oop.bomberman.entities.item.FlameItem;
 import uet.oop.bomberman.entities.item.HiddenItem;
-import uet.oop.bomberman.entities.staticEntity.Bomb;
-import uet.oop.bomberman.entities.staticEntity.Portal;
+import uet.oop.bomberman.entities.item.SpeedItem;
+import uet.oop.bomberman.entities.staticEntity.*;
 import uet.oop.bomberman.graphics.Sprite;
+
+import static uet.oop.bomberman.GamePlay.getEntityAtPosition;
+import static uet.oop.bomberman.entities.staticEntity.Bomb.setRangeOfFlame;
 
 public class Bomber extends AnimatedEntity {
     public static int bomberLife = 3;
     protected static int bomb = 1;
     protected static int length = 0;
-
 
     public Bomber(Point coordinate, Image img) {
         super(coordinate, img);
@@ -96,14 +100,16 @@ public class Bomber extends AnimatedEntity {
 
     @Override
     public void handleCollision() {
-        Entity e = GamePlay.getEntityAtPosition(coordinate.getX(), coordinate.getY());
+        Entity e = getEntityAtPosition(coordinate.getX(), coordinate.getY());
         if (e instanceof Portal) {
             if (GamePlay.gameLevel < 7) {
                 GamePlay.createMap(++GamePlay.gameLevel);
+                resetBomberAbilityWhenPassLevel();
             }
         }
         if (e instanceof HiddenItem) {
             ((HiddenItem) e).handleItem();
+            GamePlay.removeItem(coordinate);
         }
         if (e instanceof Enemy) {
             System.out.println("a");
@@ -114,15 +120,15 @@ public class Bomber extends AnimatedEntity {
     }
 
     protected void resetBomberAbilityWhenPassLevel() {
-        Bomb.setRangeOfFlame(1);
-        setSpeed(1);
+        setRangeOfFlame(1);
+        speed = 1;
         bomb = 1;
     }
 
     protected void putBomb() {
         if (BombermanGame.createBomb && length < 0 && bomb > 0
-                && !(GamePlay.getEntityAtPosition(coordinate.getX(), coordinate.getY()) instanceof Bomb)) {
-            GamePlay.setBomb(new Bomb(new Point(coordinate.getX(), coordinate.getY()), Sprite.bomb.getFxImage()));
+                && !(getEntityAtPosition(coordinate.getX(), coordinate.getY()) instanceof Bomb)) {
+            GamePlay.setBomb(new Bomb(new Point(coordinate.getX(), coordinate.getY()), Sprite.bomb_2.getFxImage()));
             bomb--;
             length = 10;
         }
@@ -138,12 +144,12 @@ public class Bomber extends AnimatedEntity {
         return super.canMove(x, y);
     }
 
-    public void addBomb() {
+    public static void addBomb() {
         bomb++;
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
+    public static void UpSpeed() {
+        speed++;
     }
 
     public Image getImg() {

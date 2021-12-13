@@ -12,10 +12,9 @@ public abstract class AnimatedEntity extends Entity {
     protected boolean alive = true;
     protected boolean caughtFlame = false;
     protected int animation = 0;
-    protected int speed = 1;
+
+    protected static int speed = 1;
     protected Point distance = new Point(0, 0);
-
-
 
     public AnimatedEntity(Point coordinate, Image img) {
         super(coordinate, img);

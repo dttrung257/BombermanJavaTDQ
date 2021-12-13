@@ -11,7 +11,7 @@ import uet.oop.bomberman.graphics.Sprite;
 
 public class FlameSegment extends StaticEntity {
     protected boolean _last;
-    protected int _animate = -1;
+    protected int _animate = 0;
 
     public FlameSegment(Point coordinate, Image img, Entity.Direction direction, boolean last) {
         super(coordinate, img);
@@ -21,7 +21,7 @@ public class FlameSegment extends StaticEntity {
 
 
     public void animate() {
-        if (_animate > 30) _animate = 0;
+        if (_animate > 29) _animate = 0;
         else _animate++;
     }
 
@@ -67,7 +67,7 @@ public class FlameSegment extends StaticEntity {
 
 
     public void imageAnimation(Sprite sprite1, Sprite sprite2, Sprite sprite3) {
-        img = Sprite.movingSprite(sprite2, sprite3, sprite1, _animate, 10).getFxImage();
+        img = Sprite.movingSprite(sprite2, sprite3, sprite1, _animate, 30).getFxImage();
     }
 
     @Override

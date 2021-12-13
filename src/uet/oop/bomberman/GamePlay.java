@@ -11,7 +11,6 @@ import uet.oop.bomberman.entities.enemies.Enemy;
 import uet.oop.bomberman.entities.enemies.Oneal;
 import uet.oop.bomberman.entities.item.BombItem;
 import uet.oop.bomberman.entities.item.FlameItem;
-import uet.oop.bomberman.entities.item.HiddenItem;
 import uet.oop.bomberman.entities.item.SpeedItem;
 import uet.oop.bomberman.entities.staticEntity.*;
 import uet.oop.bomberman.graphics.Sprite;
@@ -20,7 +19,6 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -96,15 +94,6 @@ public class GamePlay {
         return entity;
     }
 
-    public static int getBrickIndex(Point p) {
-        for (int i = 0; i < entities.size(); i++) {
-            if (entities.get(i).getCoordinate().equals(p)) {
-                return i + 1;
-            }
-        }
-        return 0;
-    }
-
     public static void resetData() {
         entities = new ArrayList<>();
         flames = new ArrayList<>();
@@ -170,7 +159,7 @@ public class GamePlay {
                             entities.add(br);
                             break;
                         case 'b':
-                            Entity bombItem = new BombItem(new Point(j, i), Sprite.bomb.getFxImage());
+                            Entity bombItem = new BombItem(new Point(j, i), Sprite.powerup_bombs.getFxImage());
                             Entity brick1 = new Brick(new Point(j, i), Sprite.brick.getFxImage());
                             items.add(bombItem);
                             bricks.add(brick1);
@@ -207,16 +196,16 @@ public class GamePlay {
     }
 
     public void update() {
-        if (bomberman != null) {
-            bomberman.update();
-        }
-        bricks.forEach(Entity::update);
-        enemies.forEach(Entity::update);
-        if (bombs.size() != 0) {
+        try {
+            if (bomberman != null) {
+                bomberman.update();
+            }
+            bricks.forEach(Entity::update);
+            enemies.forEach(Entity::update);
             bombs.forEach(Entity::update);
-        }
-        if (flames.size() != 0) {
             flames.forEach(Flame::update);
+        } catch (Exception e) {
+
         }
     }
 
@@ -275,6 +264,15 @@ public class GamePlay {
 
     public static void removeEnemy(Enemy enemy) {
         enemies.remove(enemy);
+    }
+
+    public static void removeItem(Point p) {
+        for(int i = 0; i < items.size(); i++) {
+            if (items.get(i).getCoordinate().equals(p)) {
+                items.remove(i);
+                break;
+            }
+        }
     }
 
     public static List<Entity> getEnemies() {

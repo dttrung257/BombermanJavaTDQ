@@ -7,9 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
-import uet.oop.bomberman.entities.AnimatedEntity;
-import uet.oop.bomberman.entities.Bomber;
-import uet.oop.bomberman.entities.Point;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class BombermanGame extends Application {

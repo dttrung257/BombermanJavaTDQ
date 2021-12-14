@@ -1,15 +1,19 @@
 package uet.oop.bomberman.entities.enemies;
 
 import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import uet.oop.bomberman.GamePlay;
 import uet.oop.bomberman.entities.AnimatedEntity;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.io.File;
 import java.util.Random;
 
 public abstract class Enemy extends AnimatedEntity {
+    protected MediaPlayer roar = new MediaPlayer(new Media(new File("res/audios/EnemyEat.mp3").toURI().toString()));
     protected int dying = 0;
 
     public Enemy(Point coordinate, Image img) {

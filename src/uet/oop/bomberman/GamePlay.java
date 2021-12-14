@@ -39,6 +39,7 @@ public class GamePlay {
     private static List<Entity> items = new ArrayList<>();
     private static List<Entity> enemies = new ArrayList<>();
     private static List<Entity> grasses = new ArrayList<>();
+    public static boolean goUp, goDown, goRight, goLeft, createBomb, FirstStep;
     public static int gameLevel;
     public static boolean paused = false;
     public static int score = 0;
@@ -199,6 +200,7 @@ public class GamePlay {
     }
 
     public void update() {
+        moveBomberman(scene);
         try {
             if (!paused) {
                 if (bomberman != null) {
@@ -231,6 +233,49 @@ public class GamePlay {
         }
     }
 
+    public void moveBomberman(Scene scene) {
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case UP:
+                    goUp = true;
+                    break;
+                case DOWN:
+                    goDown = true;
+                    break;
+                case RIGHT:
+                    goRight = true;
+                    break;
+                case LEFT:
+                    goLeft = true;
+                    break;
+                case SPACE:
+                    createBomb = true;
+                    break;
+                case P:
+                    paused = !paused;
+                    break;
+            };
+        });
+        scene.setOnKeyReleased(event -> {
+            switch (event.getCode()) {
+                case UP:
+                    goUp = false;
+                    break;
+                case DOWN:
+                    goDown = false;
+                    break;
+                case RIGHT:
+                    goRight = false;
+                    break;
+                case LEFT:
+                    goLeft = false;
+                    break;
+                case SPACE:
+                    createBomb = false;
+                    break;
+            };
+        });
+    }
 
     public static List<Entity> getEntities() {
         return entities;

@@ -84,6 +84,7 @@ public class Balloom extends Enemy {
 
     @Override
     public void handleDieAnimation() {
+        roar.play();
         img = Sprite.balloom_dead.getFxImage();
         dying++;
     }

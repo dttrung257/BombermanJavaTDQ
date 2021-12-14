@@ -10,7 +10,7 @@ import uet.oop.bomberman.graphics.Sprite;
 import static uet.oop.bomberman.GamePlay.score;
 
 public abstract class AnimatedEntity extends Entity {
-    protected boolean isMoving = false;
+    public boolean isMoving = false;
     protected boolean alive = true;
     protected boolean caughtFlame = false;
     protected int animation = 0;

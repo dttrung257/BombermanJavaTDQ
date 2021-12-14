@@ -1,6 +1,8 @@
 package uet.oop.bomberman.entities;
 
 import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.GamePlay;
 import uet.oop.bomberman.entities.enemies.Enemy;
@@ -11,11 +13,18 @@ import uet.oop.bomberman.entities.item.SpeedItem;
 import uet.oop.bomberman.entities.staticEntity.*;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.io.File;
+
 import static java.lang.Thread.sleep;
 import static uet.oop.bomberman.GamePlay.getEntityAtPosition;
 import static uet.oop.bomberman.entities.staticEntity.Bomb.setRangeOfFlame;
 
 public class Bomber extends AnimatedEntity {
+    private static Media putBom = new Media(new File("res/audios/createBomb.mp3").toURI().toString());
+    private static Media eatItems = new Media(new File("res/audios/eatItems.mp3").toURI().toString());
+    private MediaPlayer scream = new MediaPlayer(new Media(new File("res/audios/scream.mp3").toURI().toString()));
+    private static Media nextLevel = new Media(new File("res/audios/Portal.mp3").toURI().toString());
+    //public static MediaPlayer running = new MediaPlayer(new Media(new File("res/audios/jump1.mp3").toURI().toString()));
     public static int bomberLife = 3;
     protected static int bomb = 1;
 
@@ -42,7 +51,6 @@ public class Bomber extends AnimatedEntity {
         handleAnimation();
         stand(Sprite.player_up, Sprite.player_down, Sprite.player_left, Sprite.player_right);
         handleCollision();
-        System.out.println(distance.getX() + " " + distance.getY());
     }
 
     public void handleAnimation() {
@@ -61,25 +69,25 @@ public class Bomber extends AnimatedEntity {
     public void handleMove() {
         int x = 0;
         int y = 0;
-        if ((BombermanGame.goUp && distance.getX() == 0 && canMove(0, -1)) || distance.getY() < 0) {
+        if ((GamePlay.goUp && distance.getX() == 0 && canMove(0, -1)) || distance.getY() < 0) {
             y = -bomber_speed;
             if (distance.getY() >= 0) {
                 distance.setY(distance.getY() - Sprite.SCALED_SIZE);
             }
         }
-        if ((BombermanGame.goDown && distance.getX() == 0 && canMove(0, 1)) || distance.getY() > 0) {
+        if ((GamePlay.goDown && distance.getX() == 0 && canMove(0, 1)) || distance.getY() > 0) {
             y = bomber_speed;
             if (distance.getY() <= 0) {
                 distance.setY(distance.getY() + Sprite.SCALED_SIZE);
             }
         }
-        if ((BombermanGame.goLeft && distance.getY() == 0 && canMove(-1, 0)) || distance.getX() < 0) {
+        if ((GamePlay.goLeft && distance.getY() == 0 && canMove(-1, 0)) || distance.getX() < 0) {
             x = -bomber_speed;
             if (distance.getX() >= 0) {
                 distance.setX(distance.getX() - Sprite.SCALED_SIZE);
             }
         }
-        if ((BombermanGame.goRight && distance.getY() == 0 && canMove(1, 0)) || distance.getX() > 0) {
+        if ((GamePlay.goRight && distance.getY() == 0 && canMove(1, 0)) || distance.getX() > 0) {
             x = bomber_speed;
             if (distance.getX() <= 0) {
                 distance.setX(distance.getX() + Sprite.SCALED_SIZE);
@@ -91,16 +99,16 @@ public class Bomber extends AnimatedEntity {
             distance.setY(distance.getY() - y * Sprite.SPEED);
             isMoving = true;
         } else {
-            if (BombermanGame.goUp) {
+            if (GamePlay.goUp) {
                 direction = Direction.up;
             }
-            if (BombermanGame.goDown) {
+            if (GamePlay.goDown) {
                 direction = Direction.down;
             }
-            if (BombermanGame.goLeft) {
+            if (GamePlay.goLeft) {
                 direction = Direction.left;
             }
-            if (BombermanGame.goRight) {
+            if (GamePlay.goRight) {
                 direction = Direction.right;
             }
             isMoving = false;
@@ -112,11 +120,13 @@ public class Bomber extends AnimatedEntity {
         Entity e = getEntityAtPosition(coordinate.getX(), coordinate.getY());
         if (e instanceof Portal) {
             if (GamePlay.gameLevel < 7) {
+                (new MediaPlayer(nextLevel)).play();
                 GamePlay.createMap(++GamePlay.gameLevel);
                 resetBomberAbilityWhenPassLevel();
             }
         }
         if (e instanceof HiddenItem) {
+            (new MediaPlayer(eatItems)).play();
             ((HiddenItem) e).handleItem();
         }
         if (e instanceof Enemy) {
@@ -131,15 +141,17 @@ public class Bomber extends AnimatedEntity {
     }
 
     protected void putBomb() {
-        if (BombermanGame.createBomb && bomb > 0
+        if (GamePlay.createBomb && bomb > 0
                 && !(getEntityAtPosition(coordinate.getX(), coordinate.getY()) instanceof Bomb)) {
             GamePlay.setBomb(new Bomb(new Point(coordinate.getX(), coordinate.getY()), Sprite.bomb_2.getFxImage()));
             bomb--;
+            (new MediaPlayer(putBom)).play();
         }
     }
 
     @Override
     public void die() {
+        scream.play();
         if (alive) {
             bomberLife--;
             alive = false;

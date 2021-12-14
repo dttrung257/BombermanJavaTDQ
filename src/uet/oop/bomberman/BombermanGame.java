@@ -6,10 +6,16 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import uet.oop.bomberman.entities.Bomber;
 import uet.oop.bomberman.graphics.GameText;
 import uet.oop.bomberman.graphics.Sprite;
+
+import java.io.File;
 
 import static java.lang.Thread.sleep;
 
@@ -18,8 +24,6 @@ public class BombermanGame extends Application {
     public static final int HEIGHT = 16;
     private GraphicsContext gc;
     private Canvas canvas;
-
-    public static boolean goUp, goDown, goRight, goLeft, createBomb;
 
     public static void main(String[] args) {
         Application.launch();
@@ -41,13 +45,25 @@ public class BombermanGame extends Application {
         Scene scene = new Scene(root);
         scene.setFill(Color.LIGHTBLUE);
         // Them scene vao stage
+        stage.getIcons().add(new Image("icon.png"));
+        stage.setTitle("TDQ Bomberman");
+        stage.setResizable(false);
+        // Them scene vao stage
         stage.setScene(scene);
-        stage.setTitle("Bomberman Game");
         stage.show();
+
         GamePlay newGame = new GamePlay(canvas, gc, scene);
+        MediaPlayer music = new MediaPlayer(new Media(new File("res/audios/backgroundSound.mp3").toURI().toString()));
+        music.setCycleCount(-1);
+        music.setVolume(0.2);
         AnimationTimer Timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
+                if(!GamePlay.paused) {
+                    music.play();
+                } else {
+                    music.pause();
+                }
                 newGame.render();
                 newGame.update();
                 texts.update();
@@ -55,50 +71,5 @@ public class BombermanGame extends Application {
         };
         Timer.start();
         newGame.createMap(1);
-        moveBomberman(scene);
-    }
-
-    public void moveBomberman(Scene scene) {
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case UP:
-                    goUp = true;
-                    break;
-                case DOWN:
-                    goDown = true;
-                    break;
-                case RIGHT:
-                    goRight = true;
-                    break;
-                case LEFT:
-                    goLeft = true;
-                    break;
-                case SPACE:
-                    createBomb = true;
-                    break;
-                case P:
-                    GamePlay.paused = !GamePlay.paused;
-                    break;
-            };
-        });
-        scene.setOnKeyReleased(event -> {
-            switch (event.getCode()) {
-                case UP:
-                    goUp = false;
-                    break;
-                case DOWN:
-                    goDown = false;
-                    break;
-                case RIGHT:
-                    goRight = false;
-                    break;
-                case LEFT:
-                    goLeft = false;
-                    break;
-                case SPACE:
-                    createBomb = false;
-                    break;
-            };
-        });
     }
 }

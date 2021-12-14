@@ -1,11 +1,16 @@
 package uet.oop.bomberman.entities.staticEntity;
 
 import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import uet.oop.bomberman.GamePlay;
 import uet.oop.bomberman.entities.Point;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.io.File;
+
 public class Bomb extends StaticEntity {
+    private static Media explosion = new Media(new File("res/audios/explosion1.mp3").toURI().toString());
     protected int timeExplode = 120;
     protected static int rangeOfFlame = 1;
     protected int animate = 0;
@@ -34,6 +39,7 @@ public class Bomb extends StaticEntity {
 
     protected void explode() {
         GamePlay.setFlame(new Flame(coordinate, img, rangeOfFlame));
+        new MediaPlayer(explosion).play();
         GamePlay.removeBomb();
     }
 

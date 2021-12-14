@@ -181,6 +181,7 @@ public class Oneal extends Enemy {
 
     @Override
     public void handleDieAnimation() {
+        roar.play();
         img = Sprite.oneal_dead.getFxImage();
         dying++;
     }

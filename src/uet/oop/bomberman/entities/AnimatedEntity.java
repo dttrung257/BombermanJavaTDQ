@@ -15,7 +15,7 @@ public abstract class AnimatedEntity extends Entity {
     protected boolean caughtFlame = false;
     protected int animation = 0;
 
-    protected static int speed = 1;
+    protected int bomber_speed = 1;
     protected Point distance = new Point(0, 0);
 
     public AnimatedEntity(Point coordinate, Image img) {
@@ -146,6 +146,10 @@ public abstract class AnimatedEntity extends Entity {
 
     public void setAlive(boolean alive) {
         this.alive = alive;
+    }
+
+    public Point getDistance() {
+        return distance;
     }
 
     public abstract void handleMove();

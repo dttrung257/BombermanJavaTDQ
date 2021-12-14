@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities.item;
 
 import javafx.scene.image.Image;
+import uet.oop.bomberman.GamePlay;
 import uet.oop.bomberman.entities.Bomber;
 import uet.oop.bomberman.entities.Point;
 
@@ -16,5 +17,6 @@ public class BombItem extends HiddenItem {
     @Override
     public void handleItem() {
         Bomber.addBomb();
+        GamePlay.removeItem(this);
     }
 }

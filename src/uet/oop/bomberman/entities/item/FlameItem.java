@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities.item;
 
 import javafx.scene.image.Image;
+import uet.oop.bomberman.GamePlay;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
 import uet.oop.bomberman.entities.staticEntity.Grass;
@@ -21,5 +22,6 @@ public class FlameItem extends HiddenItem {
     @Override
     public void handleItem() {
         setRangeOfFlame(0);
+        GamePlay.removeItem(this);
     }
 }

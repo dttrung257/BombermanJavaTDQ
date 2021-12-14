@@ -25,7 +25,7 @@ public class Bomb extends StaticEntity {
 
     public void handleAnimation(Sprite sprite1, Sprite sprite2, Sprite sprite3) {
         img = Sprite.movingSprite(sprite1, sprite2, sprite3, animate, 50).getFxImage();
-        if (animate > 49) {
+        if (animate > 90) {
             animate = 0;
         } else {
             animate++;

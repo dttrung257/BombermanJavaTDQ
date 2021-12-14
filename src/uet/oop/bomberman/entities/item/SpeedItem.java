@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities.item;
 
 import javafx.scene.image.Image;
+import uet.oop.bomberman.GamePlay;
 import uet.oop.bomberman.entities.Bomber;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
@@ -21,6 +22,10 @@ public class SpeedItem extends HiddenItem {
 
     @Override
     public void handleItem() {
-        Bomber.UpSpeed();
+        if (GamePlay.getBomber().getDistance().getX() % 2 == 0
+            && GamePlay.getBomber().getDistance().getY() % 2 == 0) {
+            GamePlay.getBomber().setBomberSpeed(2);
+            GamePlay.removeItem(this);
+        }
     }
 }

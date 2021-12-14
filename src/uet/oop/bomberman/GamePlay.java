@@ -11,6 +11,7 @@ import uet.oop.bomberman.entities.enemies.Enemy;
 import uet.oop.bomberman.entities.enemies.Oneal;
 import uet.oop.bomberman.entities.item.BombItem;
 import uet.oop.bomberman.entities.item.FlameItem;
+import uet.oop.bomberman.entities.item.HiddenItem;
 import uet.oop.bomberman.entities.item.SpeedItem;
 import uet.oop.bomberman.entities.staticEntity.*;
 import uet.oop.bomberman.graphics.Sprite;
@@ -259,10 +260,22 @@ public class GamePlay {
         bombs.add(bomb);
     }
 
+    public static Bomber getBomber() {
+        return bomberman;
+    }
+
+    public static void removeBomber() {
+        bomberman = null;
+    }
+
+    public static void setBomber(Bomber bomber) {
+        GamePlay.bomberman = bomber;
+    }
+
     public static void removeBomb() {
         bombs.remove(0);
         if (bomberman != null) {
-            bomberman.addBomb();
+            Bomber.addBomb();
         }
     }
 
@@ -270,13 +283,8 @@ public class GamePlay {
         enemies.remove(enemy);
     }
 
-    public static void removeItem(Point p) {
-        for(int i = 0; i < items.size(); i++) {
-            if (items.get(i).getCoordinate().equals(p)) {
-                items.remove(i);
-                break;
-            }
-        }
+    public static void removeItem(HiddenItem item) {
+        items.remove(item);
     }
 
     public static List<Entity> getEnemies() {

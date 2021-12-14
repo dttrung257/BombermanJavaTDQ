@@ -18,7 +18,6 @@ import static uet.oop.bomberman.entities.staticEntity.Bomb.setRangeOfFlame;
 public class Bomber extends AnimatedEntity {
     public static int bomberLife = 3;
     protected static int bomb = 1;
-    protected static int length = 0;
 
     public Bomber(Point coordinate, Image img) {
         super(coordinate, img);
@@ -26,14 +25,24 @@ public class Bomber extends AnimatedEntity {
 
     @Override
     public void update() {
+        if (!alive) {
+            if (animation == 60) {
+                GamePlay.removeBomber();
+                if (bomberLife > 0) {
+                    GamePlay.setBomber(new Bomber(new Point(1, 1), Sprite.player_right.getFxImage()));
+                    alive = true;
+                }
+            }
+        }
+        if (bomberLife <= 0) {
+            System.exit(0);
+        }
         putBomb();
         handleMove();
         handleAnimation();
         stand(Sprite.player_up, Sprite.player_down, Sprite.player_left, Sprite.player_right);
         handleCollision();
-        if (bomberLife <= 0) {
-            //System.exit(0);
-        }
+        System.out.println(distance.getX() + " " + distance.getY());
     }
 
     public void handleAnimation() {
@@ -41,12 +50,11 @@ public class Bomber extends AnimatedEntity {
                 Sprite.player_down_1, Sprite.player_down_2,
                 Sprite.player_left_1, Sprite.player_left_2,
                 Sprite.player_right_1, Sprite.player_right_2);
-        if (animation == 1600) {
+        if (animation > 120) {
             animation = 0;
         } else {
             animation++;
         }
-        length--;
     }
 
     @Override
@@ -54,25 +62,25 @@ public class Bomber extends AnimatedEntity {
         int x = 0;
         int y = 0;
         if ((BombermanGame.goUp && distance.getX() == 0 && canMove(0, -1)) || distance.getY() < 0) {
-            y = -speed;
+            y = -bomber_speed;
             if (distance.getY() >= 0) {
                 distance.setY(distance.getY() - Sprite.SCALED_SIZE);
             }
         }
         if ((BombermanGame.goDown && distance.getX() == 0 && canMove(0, 1)) || distance.getY() > 0) {
-            y = speed;
+            y = bomber_speed;
             if (distance.getY() <= 0) {
                 distance.setY(distance.getY() + Sprite.SCALED_SIZE);
             }
         }
         if ((BombermanGame.goLeft && distance.getY() == 0 && canMove(-1, 0)) || distance.getX() < 0) {
-            x = -speed;
+            x = -bomber_speed;
             if (distance.getX() >= 0) {
                 distance.setX(distance.getX() - Sprite.SCALED_SIZE);
             }
         }
         if ((BombermanGame.goRight && distance.getY() == 0 && canMove(1, 0)) || distance.getX() > 0) {
-            x = speed;
+            x = bomber_speed;
             if (distance.getX() <= 0) {
                 distance.setX(distance.getX() + Sprite.SCALED_SIZE);
             }
@@ -110,7 +118,6 @@ public class Bomber extends AnimatedEntity {
         }
         if (e instanceof HiddenItem) {
             ((HiddenItem) e).handleItem();
-            GamePlay.removeItem(coordinate);
         }
         if (e instanceof Enemy) {
             die();
@@ -119,39 +126,25 @@ public class Bomber extends AnimatedEntity {
 
     protected void resetBomberAbilityWhenPassLevel() {
         setRangeOfFlame(1);
-        speed = 1;
+        bomber_speed = 1;
         bomb = 1;
     }
 
     protected void putBomb() {
-        if (BombermanGame.createBomb && length < 0 && bomb > 0
+        if (BombermanGame.createBomb && bomb > 0
                 && !(getEntityAtPosition(coordinate.getX(), coordinate.getY()) instanceof Bomb)) {
             GamePlay.setBomb(new Bomb(new Point(coordinate.getX(), coordinate.getY()), Sprite.bomb_2.getFxImage()));
             bomb--;
-            length = 10;
         }
     }
 
     @Override
     public void die() {
         if (alive) {
+            bomberLife--;
             alive = false;
             animation = 0;
         }
-        /*try {
-            sleep(1000);
-        } catch (Exception e) {
-
-        }*/
-        Point p = new Point(Sprite.SCALED_SIZE, 2 * Sprite.SCALED_SIZE);
-        if (canvas_coordinate.equals(p)) {
-            setCanvas_coordinate(new Point(3 * Sprite.SCALED_SIZE, 3 * Sprite.SCALED_SIZE));
-        } else {
-            setCanvas_coordinate(p);
-        }
-        setCoordinate(canvas_coordinate.toCoordinate());
-        bomberLife--;
-        alive = true;
     }
 
     @Override
@@ -168,8 +161,8 @@ public class Bomber extends AnimatedEntity {
         bomb++;
     }
 
-    public static void UpSpeed() {
-        speed++;
+    public void setBomberSpeed(int speed) {
+        this.bomber_speed = speed;
     }
 
     public Image getImg() {

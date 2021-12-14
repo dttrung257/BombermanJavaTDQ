@@ -14,7 +14,6 @@ import java.util.Random;
 
 public abstract class Enemy extends AnimatedEntity {
     protected MediaPlayer roar = new MediaPlayer(new Media(new File("res/audios/EnemyEat.mp3").toURI().toString()));
-    protected int dying = 0;
 
     public Enemy(Point coordinate, Image img) {
         super(coordinate, img);
@@ -24,11 +23,20 @@ public abstract class Enemy extends AnimatedEntity {
 
     @Override
     public void update() {
+        handleAnimation();
         if (!alive) {
             handleDieAnimation();
-            if (dying == 60) {
+            if (animation == 60) {
                 GamePlay.removeEnemy(this);
             }
+        }
+    }
+
+    public void handleAnimation() {
+        if (animation > 120) {
+            animation = 0;
+        } else {
+            animation++;
         }
     }
 
@@ -89,5 +97,4 @@ public abstract class Enemy extends AnimatedEntity {
         }
     }
 
-    public abstract void handleDieAnimation();
 }

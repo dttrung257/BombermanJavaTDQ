@@ -22,6 +22,9 @@ public class Balloom extends Enemy {
     @Override
     public void update() {
         super.update();
+        if (!alive) {
+            return;
+        }
         randomizeDirection();
         handleMove();
         handleAnimation(Sprite.balloom_left1, Sprite.balloom_left2, Sprite.balloom_left3,
@@ -86,6 +89,5 @@ public class Balloom extends Enemy {
     public void handleDieAnimation() {
         roar.play();
         img = Sprite.balloom_dead.getFxImage();
-        dying++;
     }
 }

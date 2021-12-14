@@ -23,6 +23,9 @@ public class Oneal extends Enemy {
     @Override
     public void update() {
         super.update();
+        if (!alive) {
+            return;
+        }
         setDirection();
         handleMove();
         handleAnimation(Sprite.oneal_left1, Sprite.oneal_left2, Sprite.oneal_left3,
@@ -67,25 +70,25 @@ public class Oneal extends Enemy {
     public void handleMove() {
         int x = 0;
         int y = 0;
-        if ((goUp && distance.getX() == 0 && canMove(0, -1/*SPEED*/) && canMove(0, -SPEED)) || distance.getY() < 0) {
+        if ((goUp && distance.getX() == 0 && canMove(0, -1)) || distance.getY() < 0) {
             y = -SPEED;
             if (distance.getY() >= 0) {
                 distance.setY(distance.getY() - Sprite.SCALED_SIZE);
             }
         }
-        if ((goDown && distance.getX() == 0 && canMove(0, 1/*SPEED*/) && canMove(0, SPEED)) || distance.getY() > 0) {
+        if ((goDown && distance.getX() == 0 && canMove(0, 1)) || distance.getY() > 0) {
             y = SPEED;
             if (distance.getY() <= 0) {
                 distance.setY(distance.getY() + Sprite.SCALED_SIZE);
             }
         }
-        if ((goLeft && distance.getY() == 0 && canMove(-1/*SPEED*/, 0) && canMove(-SPEED, 0)) || distance.getX() < 0) {
+        if ((goLeft && distance.getY() == 0 && canMove(-1, 0)) || distance.getX() < 0) {
             x = -SPEED;
             if (distance.getX() >= 0) {
                 distance.setX(distance.getX() - Sprite.SCALED_SIZE);
             }
         }
-        if ((goRight && distance.getY() == 0 && canMove(1/*SPEED*/, 0) && canMove(SPEED, 0)) || distance.getX() > 0) {
+        if ((goRight && distance.getY() == 0 && canMove(1, 0)) || distance.getX() > 0) {
             x = SPEED;
             if (distance.getX() <= 0) {
                 distance.setX(distance.getX() + Sprite.SCALED_SIZE);
@@ -183,6 +186,5 @@ public class Oneal extends Enemy {
     public void handleDieAnimation() {
         roar.play();
         img = Sprite.oneal_dead.getFxImage();
-        dying++;
     }
 }

@@ -34,7 +34,9 @@ public class Bomber extends AnimatedEntity {
 
     @Override
     public void update() {
+        handleAnimation();
         if (!alive) {
+            handleDieAnimation();
             if (animation == 60) {
                 GamePlay.removeBomber();
                 if (bomberLife > 0) {
@@ -42,27 +44,31 @@ public class Bomber extends AnimatedEntity {
                     alive = true;
                 }
             }
+            return;
         }
         if (bomberLife <= 0) {
-            System.exit(0);
+            BombermanGame.stage.hide();
         }
         putBomb();
         handleMove();
-        handleAnimation();
+        handleMoveAnimation();
         stand(Sprite.player_up, Sprite.player_down, Sprite.player_left, Sprite.player_right);
         handleCollision();
     }
 
     public void handleAnimation() {
-        displayAnimation(Sprite.player_up_1, Sprite.player_up_2,
-                Sprite.player_down_1, Sprite.player_down_2,
-                Sprite.player_left_1, Sprite.player_left_2,
-                Sprite.player_right_1, Sprite.player_right_2);
         if (animation > 120) {
             animation = 0;
         } else {
             animation++;
         }
+    }
+
+    public void handleMoveAnimation() {
+        displayAnimation(Sprite.player_up_1, Sprite.player_up_2,
+                Sprite.player_down_1, Sprite.player_down_2,
+                Sprite.player_left_1, Sprite.player_left_2,
+                Sprite.player_right_1, Sprite.player_right_2);
     }
 
     @Override
@@ -116,6 +122,14 @@ public class Bomber extends AnimatedEntity {
     }
 
     @Override
+    public void handleDieAnimation() {
+        img = Sprite.movingSprite(Sprite.player_dead1,
+                                    Sprite.player_dead2,
+                                    Sprite.player_dead3,
+                                    animation, 20).getFxImage();
+    }
+
+    @Override
     public void handleCollision() {
         Entity e = getEntityAtPosition(coordinate.getX(), coordinate.getY());
         if (e instanceof Portal) {
@@ -133,6 +147,8 @@ public class Bomber extends AnimatedEntity {
             die();
         }
     }
+
+
 
     protected void resetBomberAbilityWhenPassLevel() {
         setRangeOfFlame(1);

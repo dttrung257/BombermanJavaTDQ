@@ -20,6 +20,7 @@ import java.io.File;
 import static java.lang.Thread.sleep;
 
 public class BombermanGame extends Application {
+    public static Stage stage = new Stage();
     public static final int WIDTH = 31;
     public static final int HEIGHT = 16;
     private GraphicsContext gc;
@@ -30,7 +31,8 @@ public class BombermanGame extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage primaryStage) {
+        stage = primaryStage;
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
         gc = canvas.getGraphicsContext2D();

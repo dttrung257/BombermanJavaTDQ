@@ -136,6 +136,8 @@ public abstract class AnimatedEntity extends Entity {
 
     public abstract void die();
 
+    public abstract void handleDieAnimation();
+
     public boolean isAlive() {
         return alive;
     }

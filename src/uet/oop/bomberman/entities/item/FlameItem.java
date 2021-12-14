@@ -21,7 +21,7 @@ public class FlameItem extends HiddenItem {
 
     @Override
     public void handleItem() {
-        setRangeOfFlame(0);
+        setRangeOfFlame(2);
         GamePlay.removeItem(this);
     }
 }

@@ -23,8 +23,7 @@ public class Bomber extends AnimatedEntity {
     private static Media putBom = new Media(new File("res/audios/createBomb.mp3").toURI().toString());
     private static Media eatItems = new Media(new File("res/audios/eatItems.mp3").toURI().toString());
     private MediaPlayer scream = new MediaPlayer(new Media(new File("res/audios/scream.mp3").toURI().toString()));
-    private static Media nextLevel = new Media(new File("res/audios/Portal.mp3").toURI().toString());
-    //public static MediaPlayer running = new MediaPlayer(new Media(new File("res/audios/jump1.mp3").toURI().toString()));
+
     public static int bomberLife = 3;
     protected static int bomb = 1;
 
@@ -42,11 +41,14 @@ public class Bomber extends AnimatedEntity {
                 if (bomberLife > 0) {
                     GamePlay.setBomber(new Bomber(new Point(1, 1), Sprite.player_right.getFxImage()));
                     alive = true;
+                } else {
+                    GamePlay.end = true;
                 }
             }
             return;
         }
         if (bomberLife <= 0) {
+            GamePlay.end = true;
             BombermanGame.stage.hide();
         }
         putBomb();
@@ -144,21 +146,24 @@ public class Bomber extends AnimatedEntity {
         Entity e = getEntityAtPosition(coordinate.getX(), coordinate.getY());
         if (e instanceof Portal) {
             if (GamePlay.gameLevel < 7) {
-                (new MediaPlayer(nextLevel)).play();
                 GamePlay.createMap(++GamePlay.gameLevel);
+                GamePlay.nextLevel();
                 resetBomberAbilityWhenPassLevel();
+            } else if (GamePlay.gameLevel == 7) {
+                GamePlay.removeBomber();
+                GamePlay.endgame();
             }
         }
         if (e instanceof HiddenItem) {
-            (new MediaPlayer(eatItems)).play();
+            MediaPlayer put = new MediaPlayer(eatItems);
+            put.setVolume(BombermanGame.soundD);
+            put.play();
             ((HiddenItem) e).handleItem();
         }
         if (e instanceof Enemy) {
             die();
         }
     }
-
-
 
     protected void resetBomberAbilityWhenPassLevel() {
         setRangeOfFlame(1);
@@ -171,13 +176,16 @@ public class Bomber extends AnimatedEntity {
                 && !(getEntityAtPosition(coordinate.getX(), coordinate.getY()) instanceof Bomb)) {
             GamePlay.setBomb(new Bomb(new Point(coordinate.getX(), coordinate.getY()), Sprite.bomb_2.getFxImage()));
             bomb--;
-            (new MediaPlayer(putBom)).play();
+            MediaPlayer put = new MediaPlayer(putBom);
+            put.setVolume(BombermanGame.soundD);
+            put.play();
         }
         if (bomb == 0) GamePlay.createBomb = false;
     }
 
     @Override
     public void die() {
+        scream.setVolume(BombermanGame.soundD);
         scream.play();
         if (alive) {
             bomberLife--;
@@ -193,6 +201,10 @@ public class Bomber extends AnimatedEntity {
 
     public static void addBomb() {
         bomb++;
+    }
+
+    public static void upLife() {
+        bomberLife++;
     }
 
     public void setBomberSpeed(int speed) {

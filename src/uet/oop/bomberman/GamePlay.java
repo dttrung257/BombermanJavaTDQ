@@ -1,20 +1,24 @@
 package uet.oop.bomberman;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import uet.oop.bomberman.entities.Bomber;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
 import uet.oop.bomberman.entities.enemies.*;
-import uet.oop.bomberman.entities.item.BombItem;
-import uet.oop.bomberman.entities.item.FlameItem;
-import uet.oop.bomberman.entities.item.HiddenItem;
-import uet.oop.bomberman.entities.item.SpeedItem;
+import uet.oop.bomberman.entities.item.*;
 import uet.oop.bomberman.entities.staticEntity.*;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -27,6 +31,7 @@ import static java.lang.Thread.sleep;
 public class GamePlay {
     public static int WIDTH;
     public static int HEIGHT;
+    public static Group root;
     private static Scene scene;
     private static GraphicsContext gc;
     private static Canvas canvas;
@@ -43,11 +48,14 @@ public class GamePlay {
     public static boolean goUp, goDown, goRight, goLeft, createBomb, FirstStep;
     public static int gameLevel;
     public static boolean paused = false;
+    public static boolean play = false, first = false, end = false;
     public static int score = 0;
+    private static double rate = 2.0;
     public static boolean autoPlay = false;
     private int autoStatus = 0;
 
-    public GamePlay(Canvas canvas, GraphicsContext gc, Scene scene) {
+    public GamePlay(Canvas canvas, GraphicsContext gc, Scene scene, Group root) {
+        this.root = root;
         this.canvas = canvas;
         this.gc = gc;
         this.scene = scene;
@@ -257,6 +265,14 @@ public class GamePlay {
                             entities.add(speedItem);
                             entities.add(brick3);
                             break;
+                        case 'l':
+                            Entity lifeItem = new LifeItem(new Point(j, i), Sprite.powerup_detonator.getFxImage());
+                            Entity brick4 = new Brick(new Point(j, i), Sprite.brick.getFxImage());
+                            items.add(lifeItem);
+                            bricks.add(brick4);
+                            entities.add(lifeItem);
+                            entities.add(brick4);
+                            break;
                         default:
                     }
                 }
@@ -264,13 +280,16 @@ public class GamePlay {
             bufferedReader.close();
             inputStreamReader.close();
             fileInputStream.close();
-            gameLevel = level;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     public void update() {
+        if(end) {
+            gameOver();
+            end = false;
+        }
         moveBomberman(scene);
         try {
             if (!paused) {
@@ -714,6 +733,53 @@ public class GamePlay {
         }
     }
 
+    public static void nextLevel() {
+        MediaPlayer music = new MediaPlayer(new Media(new File("res/medias/level" + gameLevel + ".mp4").toURI().toString()));
+        MediaView viewer = new MediaView(music);
+        viewer.setPreserveRatio(true);
+        root.getChildren().add(viewer);
+        music.setVolume(BombermanGame.musicD);
+        music.play();
+        viewer.setOnMouseClicked(event -> {
+            music.setRate(rate++);
+        });
+        music.setOnEndOfMedia(() -> {
+            //GamePlay.play = true;
+            viewer.setVisible(false);
+        });
+
+    }
+
+    public static void gameOver() {
+        MediaPlayer music = new MediaPlayer(new Media(new File("res/medias/gameover.mp4").toURI().toString()));
+        MediaView viewer = new MediaView(music);
+        viewer.setPreserveRatio(true);
+        viewer.setOnMouseClicked(event -> {
+            music.setRate(rate++);
+        });
+        root.getChildren().add(viewer);
+        music.setVolume(BombermanGame.musicD);
+        music.play();
+        music.setOnEndOfMedia(()->{
+            System.exit(0);
+        });
+    }
+
+    public static void endgame() {
+        MediaPlayer music = new MediaPlayer(new Media(new File("res/medias/end.mp4").toURI().toString()));
+        MediaView viewer = new MediaView(music);
+        viewer.setPreserveRatio(true);
+        viewer.setOnMouseClicked(event -> {
+            music.setRate(rate++);
+        });
+        root.getChildren().add(viewer);
+        music.setVolume(BombermanGame.musicD);
+        music.play();
+        music.setOnEndOfMedia(()->{
+            System.exit(0);
+        });
+    }
+
     public static void removeEnemy(Enemy enemy) {
         enemies.remove(enemy);
     }
@@ -724,5 +790,10 @@ public class GamePlay {
 
     public static List<Entity> getEnemies() {
         return enemies;
+    }
+
+    public static void setVolume(double music, double sound) {
+        BombermanGame.musicD = music/200;
+        BombermanGame.soundD = sound/100;
     }
 }

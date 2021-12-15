@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities.enemies;
 
 import javafx.scene.image.Image;
+import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.GamePlay;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
@@ -22,7 +23,6 @@ public class Kondoria extends Enemy {
 
     @Override
     public void update() {
-        System.out.println(coordinate.getX() + " " + coordinate.getY());
         super.update();
         if (!alive) {
             return;
@@ -163,6 +163,7 @@ public class Kondoria extends Enemy {
 
     @Override
     public void handleDieAnimation() {
+        roar.setVolume(BombermanGame.soundD);
         roar.play();
         img = Sprite.kondoria_dead.getFxImage();
     }

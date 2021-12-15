@@ -101,6 +101,7 @@ public class Balloom extends Enemy {
 
     @Override
     public void handleDieAnimation() {
+        roar.setVolume(BombermanGame.soundD);
         roar.play();
         img = Sprite.balloom_dead.getFxImage();
     }

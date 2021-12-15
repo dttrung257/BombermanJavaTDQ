@@ -196,6 +196,7 @@ public class Oneal extends Enemy {
 
     @Override
     public void handleDieAnimation() {
+        roar.setVolume(BombermanGame.soundD);
         roar.play();
         img = Sprite.oneal_dead.getFxImage();
     }

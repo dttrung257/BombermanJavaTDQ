@@ -405,10 +405,7 @@ public class GamePlay {
         }
 
         if (!isSafe(b.getX(), b.getY())) {
-            if (isSafe(b.getX() + 1, b.getY()) || isSafe(b.getX() + 2, b.getY())
-                    && bomberman.canMove(1, 0)) {
-                setGoRight();
-            } else if (isSafe(b.getX() - 1, b.getY()) || isSafe(b.getX() - 2, b.getY())
+            if (isSafe(b.getX() - 1, b.getY()) || isSafe(b.getX() - 2, b.getY())
                     && bomberman.canMove(-1, 0)) {
                 setGoLeft();
             } else if (isSafe(b.getX(), b.getY() + 1) || isSafe(b.getX(), b.getY() + 2)
@@ -417,6 +414,9 @@ public class GamePlay {
             } else if (isSafe(b.getX(), b.getY() - 1) || isSafe(b.getX(), b.getY() - 2)
                     && bomberman.canMove(0, -1)) {
                 setGoUp();
+            } else if (isSafe(b.getX() + 1, b.getY()) || isSafe(b.getX() + 2, b.getY())
+                    && bomberman.canMove(1, 0)) {
+                setGoRight();
             }
             return;
         }

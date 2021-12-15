@@ -144,7 +144,7 @@ public class Bomber extends AnimatedEntity {
     @Override
     public void handleCollision() {
         Entity e = getEntityAtPosition(coordinate.getX(), coordinate.getY());
-        if (e instanceof Portal) {
+        if (e instanceof Portal && GamePlay.getEnemies().size() == 0) {
             if (GamePlay.gameLevel < 7) {
                 GamePlay.createMap(++GamePlay.gameLevel);
                 GamePlay.nextLevel();

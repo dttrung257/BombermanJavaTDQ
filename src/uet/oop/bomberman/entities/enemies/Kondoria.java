@@ -150,9 +150,6 @@ public class Kondoria extends Enemy {
         if (reachLimitOfRange) {
             return false;
         }
-        /*if (!(checkEntity instanceof Wall)) {
-            return true;
-        }*/
         return false;
     }
 

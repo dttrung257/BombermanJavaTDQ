@@ -36,7 +36,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        pusic.setVolume(BombermanGame.musicD);
+        pusic.setVolume(0.05);
         pusic.setCycleCount(-1);
         pusic.play();
     }

@@ -46,7 +46,7 @@ public class GamePlay {
     private static List<Entity> enemies = new ArrayList<>();
     private static List<Entity> grasses = new ArrayList<>();
     public static boolean goUp, goDown, goRight, goLeft, createBomb, FirstStep;
-    public static int gameLevel;
+    public static int gameLevel = 1;
     public static boolean paused = false;
     public static boolean play = false, first = false, end = false;
     public static int score = 0;
@@ -293,16 +293,15 @@ public class GamePlay {
         moveBomberman(scene);
         try {
             if (!paused) {
-                if (bomberman != null) {
-                    bomberman.update();
-                }
+            if (bomberman != null) {
+                bomberman.update();
                 bricks.forEach(Entity::update);
                 enemies.forEach(Entity::update);
                 bombs.forEach(Entity::update);
                 flames.forEach(Flame::update);
             }
+        }
         } catch (Exception e) {
-
         }
     }
 
@@ -363,7 +362,7 @@ public class GamePlay {
                 case P:
                     paused = !paused;
                     break;
-                case A:
+                case K:
                     autoPlay = true;
                     break;
             };

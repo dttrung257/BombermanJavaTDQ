@@ -86,7 +86,6 @@ public class BombermanGame extends Application {
             }
         };
         Timer.start();
-        gameLevel = 7;
         newGame.createMap(gameLevel);
     }
 }

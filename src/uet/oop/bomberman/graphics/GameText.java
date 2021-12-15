@@ -19,7 +19,7 @@ public class GameText extends ArrayList<Text> {
         add(3, new Text(220, 475, "[SPACE]: Place bomb"));
         add(4, new Text(10, 475, "[P]: Pause/Resume"));
         add(5, new Text(800, 20, ""));
-        add(6, new Text(505, 475, "[A]: On/Off Auto Mode"));
+        add(6, new Text(505, 475, "[K]: On/Off Auto Mode"));
         for (int i = 0; i < 7; i++) {
             get(i).setFont(Font.font("verdana", 18));
             get(i).setFill(Color.BLUE);

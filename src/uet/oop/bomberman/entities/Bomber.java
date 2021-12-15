@@ -37,9 +37,10 @@ public class Bomber extends AnimatedEntity {
         if (!alive) {
             handleDieAnimation();
             if (animation == 60) {
+                Bomber copy = this;
                 GamePlay.removeBomber();
                 if (bomberLife > 0) {
-                    GamePlay.setBomber(new Bomber(new Point(1, 1), Sprite.player_right.getFxImage()));
+                    GamePlay.setBomber(copy);
                     alive = true;
                 } else {
                     GamePlay.end = true;

@@ -20,6 +20,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+
+import static java.lang.Thread.sleep;
 
 public class GamePlay {
     public static int WIDTH;
@@ -41,6 +44,8 @@ public class GamePlay {
     public static int gameLevel;
     public static boolean paused = false;
     public static int score = 0;
+    public static boolean autoPlay = false;
+    private int autoStatus = 0;
 
     public GamePlay(Canvas canvas, GraphicsContext gc, Scene scene) {
         this.canvas = canvas;
@@ -81,6 +86,64 @@ public class GamePlay {
             entity = bomberman;
         }
         return entity;
+    }
+
+    public boolean isSafe(int pointX, int pointY) {
+        if (isFlameSegment(pointX, pointY)) {
+            return false;
+        }
+        if (nearBomb(pointX, pointY)) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean nearBomb(int pointX, int pointY) {
+        Iterator<Entity> itr = bombs.iterator();
+        Entity cur;
+        while (itr.hasNext()) {
+            cur = itr.next();
+            if (Math.abs(cur.getCoordinate().getY() - pointY) + Math.abs(cur.getCoordinate().getX() - pointX) < 2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean nearEnemy(int pointX, int pointY) {
+        Iterator<Entity> itr = enemies.iterator();
+        Entity cur;
+        while (itr.hasNext()) {
+            cur = itr.next();
+            if (Math.abs(cur.getCoordinate().getY() - pointY) + Math.abs(cur.getCoordinate().getX() - pointX) < 2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean protectedFromBomb(int pointX, int pointY) {
+        Iterator<Entity> itr = bombs.iterator();
+        Entity cur;
+        while (itr.hasNext()) {
+            cur = itr.next();
+            if (Math.abs(cur.getCoordinate().getY() - pointY) == 1 && Math.abs(cur.getCoordinate().getX() - pointX) == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isFlameSegment(int pointX, int pointY) {
+        Iterator<Flame> itr = flames.iterator();
+        Entity cur;
+        while (itr.hasNext()) {
+            cur = itr.next();
+            if (Math.abs(cur.getCoordinate().getY() - pointY) + Math.abs(cur.getCoordinate().getX() - pointX) < 2) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Entity checkByType(List<Entity> entities, int pointX, int pointY) {
@@ -242,6 +305,25 @@ public class GamePlay {
     }
 
     public void moveBomberman(Scene scene) {
+        if (autoPlay) {
+            scene.setOnKeyPressed(event -> {
+                switch (event.getCode()) {
+                    case P:
+                        paused = !paused;
+                        break;
+                    case A:
+                        autoPlay = false;
+                        autoStatus = 0;
+                        goDown = false;
+                        goUp = false;
+                        goRight = false;
+                        goLeft = false;
+                        break;
+                };
+            });
+            moveBomberman();
+            return;
+        }
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case UP:
@@ -261,6 +343,9 @@ public class GamePlay {
                     break;
                 case P:
                     paused = !paused;
+                    break;
+                case A:
+                    autoPlay = true;
                     break;
             };
         });
@@ -283,6 +368,303 @@ public class GamePlay {
                     break;
             };
         });
+    }
+
+    public void moveBomberman() {
+        if (GamePlay.getBomberman() == null) {
+            return;
+        }
+        Point b = GamePlay.getBomberman().getCoordinate();
+        createBomb = false;
+        boolean ok = true;
+
+        if (protectedFromBomb(b.getX(), b.getY()) || isFlameSegment(b.getX() - 1, b.getY()) || isFlameSegment(b.getX() + 1, b.getY())
+                || isFlameSegment(b.getX(), b.getY() - 1) || isFlameSegment(b.getX(), b.getY() + 1)) {
+            setGoDown();
+            goDown = false;
+            return;
+        }
+
+        switch (autoStatus) {
+            case 1:
+                setGoRight();
+                autoStatus = 0;
+                return;
+            case 2:
+                setGoUp();
+                autoStatus = 0;
+                return;
+            case 3:
+                setGoLeft();
+                autoStatus = 0;
+                return;
+            case 4:
+                setGoDown();
+                autoStatus = 0;
+                return;
+        }
+
+        if (!isSafe(b.getX(), b.getY())) {
+            if (isSafe(b.getX() + 1, b.getY()) || isSafe(b.getX() + 2, b.getY())
+                    && bomberman.canMove(1, 0)) {
+                setGoRight();
+            } else if (isSafe(b.getX() - 1, b.getY()) || isSafe(b.getX() - 2, b.getY())
+                    && bomberman.canMove(-1, 0)) {
+                setGoLeft();
+            } else if (isSafe(b.getX(), b.getY() + 1) || isSafe(b.getX(), b.getY() + 2)
+                    && bomberman.canMove(0,1)) {
+                setGoDown();
+            } else if (isSafe(b.getX(), b.getY() - 1) || isSafe(b.getX(), b.getY() - 2)
+                    && bomberman.canMove(0, -1)) {
+                setGoUp();
+            }
+            return;
+        }
+
+        if (getEntityAtPosition(b.getX(), b.getY()) instanceof Bomb) {
+            if (bomberman.canMove(1, 0) && !(getEntityAtPosition(b.getX() + 2, b.getY()) instanceof Enemy)) {
+                setGoRight();
+                if (bomberman.canMove(0, 1) || bomberman.canMove(1, 1)) {
+                    autoStatus = 4;
+                    return;
+                }
+                if (bomberman.canMove(0, -1) || bomberman.canMove(1, -1)) {
+                    autoStatus = 2;
+                    return;
+                }
+                if (bomberman.canMove(2, 0)) {
+                    autoStatus = 1;
+                    return;
+                }
+            }
+            if (bomberman.canMove(0, 1) && !(getEntityAtPosition(b.getX(), b.getY() + 2) instanceof Enemy)) {
+                setGoDown();
+                if (bomberman.canMove(1, 0) || bomberman.canMove(1, 1)) {
+                    autoStatus = 1;
+                    return;
+                }
+                if (bomberman.canMove(-1, 0) || bomberman.canMove(-1, 1)) {
+                    autoStatus = 3;
+                    return;
+                }
+                if (bomberman.canMove(0, 2)) {
+                    autoStatus = 4;
+                    return;
+                }
+            }
+            if (bomberman.canMove(-1, 0) && !(getEntityAtPosition(b.getX() - 2, b.getY()) instanceof Enemy)) {
+                setGoLeft();
+                if (bomberman.canMove(0, -1) || bomberman.canMove(-1, -1)) {
+                    autoStatus = 2;
+                    return;
+                }
+                if (bomberman.canMove(0, 1) || bomberman.canMove(-1, 1)) {
+                    autoStatus = 4;
+                    return;
+                }
+                if (bomberman.canMove(-2, 0)) {
+                    autoStatus = 3;
+                    return;
+                }
+            }
+            if (bomberman.canMove(0, -1) && !(getEntityAtPosition(b.getX(), b.getY() - 2) instanceof Enemy)) {
+                setGoUp();
+                if (bomberman.canMove(1, -1)) {
+                    autoStatus = 1;
+                    return;
+                }
+                if (bomberman.canMove(-1, -1)) {
+                    autoStatus = 3;
+                    return;
+                }
+                if (bomberman.canMove(0, -2)) {
+                    autoStatus = 2;
+                    return;
+                }
+            }
+            ok = true;
+        }
+
+
+
+        if (!isSafe(b.getX() + 1, b.getY())) {
+            goRight = false;
+            ok = false;
+        } else if (!isSafe(b.getX() - 1, b.getY())) {
+            goLeft = false;
+            ok = false;
+        } else if (!isSafe(b.getX(), b.getY() + 1)) {
+            goDown = false;
+            ok = false;
+        } else if (!isSafe(b.getX(), b.getY() - 1)) {
+            goUp = false;
+            ok = false;
+        }
+        if (!ok) {
+            return;
+        } else {
+            ok = false;
+        }
+        for (Entity en : GamePlay.getEnemies()) {
+            Enemy e = (Enemy) en;
+            if (b.getY() - e.getCoordinate().getY() < 3 && b.getY() - e.getCoordinate().getY() > 0) {
+                if (b.getX() - e.getCoordinate().getX() < 2 && b.getX() - e.getCoordinate().getX() > -2) {
+                    if (bomberman.canMove(0, -2)) {
+                        createBomb = true;
+                        setGoDown();
+                    }
+                    ok = true;
+                }
+            } else if (b.getY() - e.getCoordinate().getY() > -3 && b.getY() - e.getCoordinate().getY() < 0) {
+                if (b.getX() - e.getCoordinate().getX() < 2 && b.getX() - e.getCoordinate().getX() > -2) {
+                    if (bomberman.canMove(0, 2)) {
+                        createBomb = true;
+                        setGoUp();
+                    }
+                    ok = true;
+                }
+            } else if (b.getX() - e.getCoordinate().getX() < 3 && b.getX() - e.getCoordinate().getX() > 0) {
+                if (b.getY() - e.getCoordinate().getY() < 2 && b.getY() - e.getCoordinate().getY() > -2) {
+                    if (bomberman.canMove(2, 0)) {
+                        createBomb = true;
+                        setGoRight();
+                    }
+                    ok = true;
+                }
+            } else if (b.getX() - e.getCoordinate().getX() > -3 && b.getX() - e.getCoordinate().getX() < 0) {
+                if (b.getY() - e.getCoordinate().getY() < 3 && b.getY() - e.getCoordinate().getY() > -3) {
+                    if (bomberman.canMove(-2, 0)) {
+                        createBomb = true;
+                        setGoLeft();
+                    }
+                    ok = true;
+                }
+            }
+        }
+        if (!ok) {
+            if (enemies.size() > 0) {
+                Point e0 = enemies.get(0).getCoordinate();
+                autoMoveTo(e0);
+            } else {
+                Point pt = portals.get(0).getCoordinate();
+                autoMoveTo(pt);
+            }
+        }
+    }
+
+    public void autoMoveTo(Point pt) {
+        Random r = new Random();
+        int i = r.nextInt(2);
+        Point b = bomberman.getCoordinate();
+        if (i == 0) {
+            goUp = false;
+            goDown = false;
+            if (pt.getX() > b.getX()) {
+                createBomb = false;
+                if (getEntityAtPosition(b.getX() + 3, b.getY()) instanceof Bomb) {
+                    goLeft = false;
+                    goRight = false;
+                } else if (getEntityAtPosition(b.getX() - 3, b.getY()) instanceof Bomb) {
+                    goLeft = false;
+                    goRight = false;
+                } else if (!bomberman.canMove(1, 0) || getEntityAtPosition(b.getX() + 1, b.getY()) instanceof Bomb
+                        || getEntityAtPosition(b.getX() + 2, b.getY()) instanceof Bomb) {
+                    if (!bomberman.canMove(1, 0)) {
+                        createBomb = true;
+                    }
+                    goRight = false;
+                    goLeft = true;
+                } else {
+                    createBomb = false;
+                    goLeft = false;
+                    goRight = true;
+                }
+            } else if (pt.getX() < b.getX()) {
+                createBomb = false;
+                if (getEntityAtPosition(b.getX() - 3, b.getY()) instanceof Bomb) {
+                    goLeft = false;
+                    goRight = false;
+                } else if (!bomberman.canMove(-1, 0) || getEntityAtPosition(b.getX() - 1, b.getY()) instanceof Bomb
+                        || getEntityAtPosition(b.getX() - 2, b.getY()) instanceof Bomb) {
+                    if (!bomberman.canMove(-1, 0)) {
+                        createBomb = true;
+                    }
+                    goLeft = false;
+                    goRight = true;
+                } else {
+                    createBomb = false;
+                    goRight = false;
+                    goLeft = true;
+                }
+            }
+            //createBomb = false;
+        } else {
+            goLeft = false;
+            goRight = false;
+            if (pt.getY() > b.getY()) {
+                createBomb = false;
+                if (getEntityAtPosition(b.getX(), 3 + b.getY()) instanceof Bomb) {
+                    goUp = false;
+                    goDown = false;
+                } else if (!bomberman.canMove(0, 1) || getEntityAtPosition(b.getX(), 1 + b.getY()) instanceof Bomb
+                        || getEntityAtPosition(b.getX(), 2 + b.getY()) instanceof Bomb) {
+                    if (!bomberman.canMove(0, 1)) {
+                        createBomb = true;
+                    }
+                    goDown = false;
+                    goUp = true;
+                } else {
+                    createBomb = false;
+                    goUp = false;
+                    goDown = true;
+                }
+            } else if (pt.getY() < b.getY()) {
+                createBomb = false;
+                if (getEntityAtPosition(b.getX(), b.getY() - 3) instanceof Bomb) {
+                    goUp = false;
+                    goDown = false;
+                } else if (!bomberman.canMove(0, -1) || getEntityAtPosition(b.getX(), b.getY() - 1) instanceof Bomb
+                        || getEntityAtPosition(b.getX(), b.getY() - 2) instanceof Bomb) {
+                    if (!bomberman.canMove(0, -1)) {
+                        createBomb = true;
+                    }
+                    goUp = false;
+                    goDown = true;
+                } else {
+                    createBomb = false;
+                    goDown = false;
+                    goUp = true;
+                }
+            }
+        }
+    }
+
+    public void setGoRight() {
+        goRight = true;
+        goDown = false;
+        goUp = false;
+        goLeft = false;
+    }
+
+    public void setGoLeft() {
+        goRight = false;
+        goDown = false;
+        goUp = false;
+        goLeft = true;
+    }
+
+    public static void setGoUp() {
+        goRight = false;
+        goDown = false;
+        goUp = true;
+        goLeft = false;
+    }
+
+    public static void setGoDown() {
+        goRight = false;
+        goDown = true;
+        goUp = false;
+        goLeft = false;
     }
 
     public static List<Entity> getEntities() {

@@ -173,6 +173,7 @@ public class Bomber extends AnimatedEntity {
             bomb--;
             (new MediaPlayer(putBom)).play();
         }
+        if (bomb == 0) GamePlay.createBomb = false;
     }
 
     @Override

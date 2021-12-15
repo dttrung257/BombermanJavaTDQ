@@ -49,8 +49,7 @@ public class Flame extends Entity {
                     yt = y;
                     break;
                 case right:
-                    xt = x + i
-                    ;
+                    xt = x + i;
                     yt = y;
                     break;
             }

@@ -68,6 +68,13 @@ public abstract class Enemy extends AnimatedEntity {
         goLeft = true;
     }
 
+    public void setStand() {
+        goDown = false;
+        goUp = false;
+        goRight = false;
+        goLeft = false;
+    }
+
     /** Tao huong ngau nhien. */
     public void randomizeDirection() {
         Random r = new Random();

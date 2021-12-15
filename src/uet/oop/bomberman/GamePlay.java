@@ -6,9 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import uet.oop.bomberman.entities.Bomber;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Point;
-import uet.oop.bomberman.entities.enemies.Balloom;
-import uet.oop.bomberman.entities.enemies.Enemy;
-import uet.oop.bomberman.entities.enemies.Oneal;
+import uet.oop.bomberman.entities.enemies.*;
 import uet.oop.bomberman.entities.item.BombItem;
 import uet.oop.bomberman.entities.item.FlameItem;
 import uet.oop.bomberman.entities.item.HiddenItem;
@@ -148,6 +146,16 @@ public class GamePlay {
                             Entity oneal =  new Oneal(new Point(j, i), Sprite.oneal_right1.getFxImage());
                             enemies.add(oneal);
                             entities.add(oneal);
+                            break;
+                        case '3':
+                            Entity kondoria = new Kondoria(new Point(j, i), Sprite.kondoria_right1.getFxImage());
+                            enemies.add(kondoria);
+                            entities.add(kondoria);
+                            break;
+                        case '4':
+                            Entity minvo = new Minvo(new Point(j, i), Sprite.minvo_right1.getFxImage());
+                            enemies.add(minvo);
+                            entities.add(minvo);
                             break;
                         case '*':
                             Entity brick = new Brick(new Point(j, i), Sprite.brick.getFxImage());

@@ -125,14 +125,7 @@ public abstract class AnimatedEntity extends Entity {
         }
     }
 
-    public boolean canMove(int x, int y) {
-        Entity checkEntity = GamePlay.getEntityAtPosition(coordinate.getX() + x, coordinate.getY() + y);
-
-        if (!(checkEntity instanceof Wall) && !(checkEntity instanceof Brick)) {
-            return true;
-        }
-        return false;
-    }
+    public abstract boolean canMove(int x, int y);
 
     public abstract void die();
 

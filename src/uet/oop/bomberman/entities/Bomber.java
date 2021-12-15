@@ -122,6 +122,16 @@ public class Bomber extends AnimatedEntity {
     }
 
     @Override
+    public boolean canMove(int x, int y) {
+        Entity checkEntity = GamePlay.getEntityAtPosition(coordinate.getX() + x, coordinate.getY() + y);
+
+        if (!(checkEntity instanceof Wall) && !(checkEntity instanceof Brick)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void handleDieAnimation() {
         img = Sprite.movingSprite(Sprite.player_dead1,
                                     Sprite.player_dead2,
@@ -178,11 +188,6 @@ public class Bomber extends AnimatedEntity {
     @Override
     public void move(int x, int y) {
         super.move(x, y);
-    }
-
-    @Override
-    public boolean canMove(int x, int y) {
-        return super.canMove(x, y);
     }
 
     public static void addBomb() {

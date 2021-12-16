@@ -40,6 +40,9 @@ public class Bomber extends AnimatedEntity {
                 Bomber copy = this;
                 GamePlay.removeBomber();
                 if (bomberLife > 0) {
+                    Point point = new Point(1, 1);
+                    copy.setCoordinate(point);
+                    copy.setCanvas_coordinate(point.toCanvasCoordinate());
                     GamePlay.setBomber(copy);
                     alive = true;
                 } else {

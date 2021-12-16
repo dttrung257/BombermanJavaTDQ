@@ -37,13 +37,12 @@ public class Bomber extends AnimatedEntity {
         if (!alive) {
             handleDieAnimation();
             if (animation == 60) {
-                Bomber copy = this;
+                int copySpeed = this.bomber_speed;
                 GamePlay.removeBomber();
                 if (bomberLife > 0) {
-                    Point point = new Point(1, 1);
-                    copy.setCoordinate(point);
-                    copy.setCanvas_coordinate(point.toCanvasCoordinate());
-                    GamePlay.setBomber(copy);
+                    Bomber newBomber = new Bomber(new Point(1, 1), Sprite.player_right.getFxImage());
+                    newBomber.setBomberSpeed(copySpeed);
+                    GamePlay.setBomber(newBomber);
                     alive = true;
                 } else {
                     GamePlay.end = true;
@@ -58,7 +57,7 @@ public class Bomber extends AnimatedEntity {
         putBomb();
         handleMove();
         handleMoveAnimation();
-        stand(Sprite.player_up, Sprite.player_down, Sprite.player_left, Sprite.player_right);
+        bomberStand();
         handleCollision();
     }
 
@@ -131,10 +130,27 @@ public class Bomber extends AnimatedEntity {
     public boolean canMove(int x, int y) {
         Entity checkEntity = GamePlay.getEntityAtPosition(coordinate.getX() + x, coordinate.getY() + y);
 
-        if (!(checkEntity instanceof Wall) && !(checkEntity instanceof Brick)) {
-            return true;
+        return !(checkEntity instanceof Wall) && !(checkEntity instanceof Brick);
+    }
+
+    public void bomberStand() {
+        if (!isMoving) {
+            switch (direction) {
+                case up:
+                    img = Sprite.player_up.getFxImage();
+                    break;
+                case down:
+                    img = Sprite.player_down.getFxImage();
+                    break;
+                case left:
+                    img = Sprite.player_left.getFxImage();
+                    break;
+                case right:
+                    img = Sprite.player_right.getFxImage();
+                    break;
+                default:
+            };
         }
-        return false;
     }
 
     @Override

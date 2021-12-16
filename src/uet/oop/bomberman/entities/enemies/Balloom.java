@@ -33,7 +33,6 @@ public class Balloom extends Enemy {
         handleMove();
         handleAnimation(Sprite.balloom_left1, Sprite.balloom_left2, Sprite.balloom_left3,
                 Sprite.balloom_right1, Sprite.balloom_right2, Sprite.balloom_right3);
-        //stand(Sprite.balloom_right1, Sprite.balloom_right1, Sprite.balloom_left1, Sprite.balloom_right1);
     }
 
     @Override

@@ -105,26 +105,6 @@ public abstract class AnimatedEntity extends Entity {
         }
     }
 
-    public void stand(Sprite up, Sprite down, Sprite left, Sprite right) {
-        if (!isMoving) {
-            switch (direction) {
-                case up:
-                    img = Sprite.player_up.getFxImage();
-                    break;
-                case down:
-                    img = Sprite.player_down.getFxImage();
-                    break;
-                case left:
-                    img = Sprite.player_left.getFxImage();
-                    break;
-                case right:
-                    img = Sprite.player_right.getFxImage();
-                    break;
-                default:
-            };
-        }
-    }
-
     public abstract boolean canMove(int x, int y);
 
     public abstract void die();

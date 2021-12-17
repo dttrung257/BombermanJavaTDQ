@@ -38,56 +38,6 @@ public class Kondoria extends Enemy {
                 Sprite.kondoria_right1, Sprite.kondoria_right2, Sprite.kondoria_right3);
     }
 
-    @Override
-    public void handleMove() {
-        int x = 0;
-        int y = 0;
-        if ((goUp && distance.getX() == 0 && canMove(0, -1)) || distance.getY() < 0) {
-            y = -KONDORIA_SPEED;
-            if (distance.getY() >= 0) {
-                distance.setY(distance.getY() - Sprite.SCALED_SIZE);
-            }
-        }
-        if ((goDown && distance.getX() == 0 && canMove(0, 1)) || distance.getY() > 0) {
-            y = KONDORIA_SPEED;
-            if (distance.getY() <= 0) {
-                distance.setY(distance.getY() + Sprite.SCALED_SIZE);
-            }
-        }
-        if ((goLeft && distance.getY() == 0 && canMove(-1, 0)) || distance.getX() < 0) {
-            x = -KONDORIA_SPEED;
-            if (distance.getX() >= 0) {
-                distance.setX(distance.getX() - Sprite.SCALED_SIZE);
-            }
-        }
-        if ((goRight && distance.getY() == 0 && canMove(1, 0)) || distance.getX() > 0) {
-            x = KONDORIA_SPEED;
-            if (distance.getX() <= 0) {
-                distance.setX(distance.getX() + Sprite.SCALED_SIZE);
-            }
-        }
-        if (distance.getX() != 0 || distance.getY() != 0) {
-            move(x * KONDORIA_SPEED, y * KONDORIA_SPEED);
-            distance.setX(distance.getX() - x * KONDORIA_SPEED);
-            distance.setY(distance.getY() - y * KONDORIA_SPEED);
-            isMoving = true;
-        } else {
-            if (goUp) {
-                direction = Direction.up;
-            }
-            if (goDown) {
-                direction = Direction.down;
-            }
-            if (goLeft) {
-                direction = Direction.left;
-            }
-            if (goRight) {
-                direction = Direction.right;
-            }
-            isMoving = false;
-        }
-    }
-
     public void findBomberAI() {
         int x = coordinate.getX();
         int y = coordinate.getY();
@@ -151,6 +101,56 @@ public class Kondoria extends Enemy {
             return false;
         }
         return false;
+    }
+
+    @Override
+    public void handleMove() {
+        int x = 0;
+        int y = 0;
+        if ((goUp && distance.getX() == 0 && canMove(0, -1)) || distance.getY() < 0) {
+            y = -KONDORIA_SPEED;
+            if (distance.getY() >= 0) {
+                distance.setY(distance.getY() - Sprite.SCALED_SIZE);
+            }
+        }
+        if ((goDown && distance.getX() == 0 && canMove(0, 1)) || distance.getY() > 0) {
+            y = KONDORIA_SPEED;
+            if (distance.getY() <= 0) {
+                distance.setY(distance.getY() + Sprite.SCALED_SIZE);
+            }
+        }
+        if ((goLeft && distance.getY() == 0 && canMove(-1, 0)) || distance.getX() < 0) {
+            x = -KONDORIA_SPEED;
+            if (distance.getX() >= 0) {
+                distance.setX(distance.getX() - Sprite.SCALED_SIZE);
+            }
+        }
+        if ((goRight && distance.getY() == 0 && canMove(1, 0)) || distance.getX() > 0) {
+            x = KONDORIA_SPEED;
+            if (distance.getX() <= 0) {
+                distance.setX(distance.getX() + Sprite.SCALED_SIZE);
+            }
+        }
+        if (distance.getX() != 0 || distance.getY() != 0) {
+            move(x, y);
+            distance.setX(distance.getX() - x);
+            distance.setY(distance.getY() - y);
+            isMoving = true;
+        } else {
+            if (goUp) {
+                direction = Direction.up;
+            }
+            if (goDown) {
+                direction = Direction.down;
+            }
+            if (goLeft) {
+                direction = Direction.left;
+            }
+            if (goRight) {
+                direction = Direction.right;
+            }
+            isMoving = false;
+        }
     }
 
     @Override

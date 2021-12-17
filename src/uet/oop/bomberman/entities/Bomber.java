@@ -105,9 +105,9 @@ public class Bomber extends AnimatedEntity {
             }
         }
         if (distance.getX() != 0 || distance.getY() != 0) {
-            move(x * Sprite.SPEED, y * Sprite.SPEED);
-            distance.setX(distance.getX() - x * Sprite.SPEED);
-            distance.setY(distance.getY() - y * Sprite.SPEED);
+            move(x, y);
+            distance.setX(distance.getX() - x);
+            distance.setY(distance.getY() - y);
             isMoving = true;
         } else {
             if (GamePlay.goUp) {

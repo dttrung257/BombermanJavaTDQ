@@ -68,60 +68,6 @@ public class Oneal extends Enemy {
         }
     }
 
-    @Override
-    public void handleMove() {
-        int x = 0;
-        int y = 0;
-        if ((goUp && distance.getX() == 0 && canMove(0, -1)) || distance.getY() < 0) {
-            y = -ONEAL_SPEED;
-            if (distance.getY() >= 0) {
-                distance.setY(distance.getY() - Sprite.SCALED_SIZE);
-            }
-        }
-        if ((goDown && distance.getX() == 0 && canMove(0, 1)) || distance.getY() > 0) {
-            y = ONEAL_SPEED;
-            if (distance.getY() <= 0) {
-                distance.setY(distance.getY() + Sprite.SCALED_SIZE);
-            }
-        }
-        if ((goLeft && distance.getY() == 0 && canMove(-1, 0)) || distance.getX() < 0) {
-            x = -ONEAL_SPEED;
-            if (distance.getX() >= 0) {
-                distance.setX(distance.getX() - Sprite.SCALED_SIZE);
-            }
-        }
-        if ((goRight && distance.getY() == 0 && canMove(1, 0)) || distance.getX() > 0) {
-            x = ONEAL_SPEED;
-            if (distance.getX() <= 0) {
-                distance.setX(distance.getX() + Sprite.SCALED_SIZE);
-            }
-        }
-        if (distance.getX() != 0 || distance.getY() != 0) {
-            if (coordinate.getX() + x * ONEAL_SPEED != lastVisited.getX()
-                || coordinate.getY() + y * ONEAL_SPEED != lastVisited.getY()) {
-                lastVisited = coordinate;
-                move(x * ONEAL_SPEED, y * ONEAL_SPEED);
-            }
-            distance.setX(distance.getX() - x * ONEAL_SPEED);
-            distance.setY(distance.getY() - y * ONEAL_SPEED);
-            isMoving = true;
-        } else {
-            if (goUp) {
-                direction = Direction.up;
-            }
-            if (goDown) {
-                direction = Direction.down;
-            }
-            if (goLeft) {
-                direction = Direction.left;
-            }
-            if (goRight) {
-                direction = Direction.right;
-            }
-            isMoving = false;
-        }
-    }
-
     public void minPath(Point o, Point b, int[][] B, int[] dx, int[] dy) {
         B[b.getY()][b.getX()] = 1;
         Point oUp = new Point(o.getX(), o.getY() - ONEAL_SPEED);
@@ -177,6 +123,60 @@ public class Oneal extends Enemy {
             }
         }
         randomizeDirection();
+    }
+
+    @Override
+    public void handleMove() {
+        int x = 0;
+        int y = 0;
+        if ((goUp && distance.getX() == 0 && canMove(0, -1)) || distance.getY() < 0) {
+            y = -ONEAL_SPEED;
+            if (distance.getY() >= 0) {
+                distance.setY(distance.getY() - Sprite.SCALED_SIZE);
+            }
+        }
+        if ((goDown && distance.getX() == 0 && canMove(0, 1)) || distance.getY() > 0) {
+            y = ONEAL_SPEED;
+            if (distance.getY() <= 0) {
+                distance.setY(distance.getY() + Sprite.SCALED_SIZE);
+            }
+        }
+        if ((goLeft && distance.getY() == 0 && canMove(-1, 0)) || distance.getX() < 0) {
+            x = -ONEAL_SPEED;
+            if (distance.getX() >= 0) {
+                distance.setX(distance.getX() - Sprite.SCALED_SIZE);
+            }
+        }
+        if ((goRight && distance.getY() == 0 && canMove(1, 0)) || distance.getX() > 0) {
+            x = ONEAL_SPEED;
+            if (distance.getX() <= 0) {
+                distance.setX(distance.getX() + Sprite.SCALED_SIZE);
+            }
+        }
+        if (distance.getX() != 0 || distance.getY() != 0) {
+            if (coordinate.getX() + x != lastVisited.getX()
+                    || coordinate.getY() + y != lastVisited.getY()) {
+                lastVisited = coordinate;
+                move(x, y);
+            }
+            distance.setX(distance.getX() - x);
+            distance.setY(distance.getY() - y);
+            isMoving = true;
+        } else {
+            if (goUp) {
+                direction = Direction.up;
+            }
+            if (goDown) {
+                direction = Direction.down;
+            }
+            if (goLeft) {
+                direction = Direction.left;
+            }
+            if (goRight) {
+                direction = Direction.right;
+            }
+            isMoving = false;
+        }
     }
 
     @Override

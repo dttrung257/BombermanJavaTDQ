@@ -12,7 +12,7 @@ import uet.oop.bomberman.entities.staticEntity.Wall;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Minvo extends Enemy {
-    private int KONDORIA_SPEED = 1;
+    private int MINVO_SPEED = 1;
     private Point beginCoordinate;
 
     public Minvo(Point coordinate, Image img) {
@@ -30,56 +30,6 @@ public class Minvo extends Enemy {
         handleMove();
         handleAnimation(Sprite.minvo_left1, Sprite.minvo_left2, Sprite.minvo_left3,
                 Sprite.minvo_right1, Sprite.minvo_right2, Sprite.minvo_right3);
-    }
-
-    @Override
-    public void handleMove() {
-        int x = 0;
-        int y = 0;
-        if ((goUp && distance.getX() == 0 && canMove(0, -1)) || distance.getY() < 0) {
-            y = -KONDORIA_SPEED;
-            if (distance.getY() >= 0) {
-                distance.setY(distance.getY() - Sprite.SCALED_SIZE);
-            }
-        }
-        if ((goDown && distance.getX() == 0 && canMove(0, 1)) || distance.getY() > 0) {
-            y = KONDORIA_SPEED;
-            if (distance.getY() <= 0) {
-                distance.setY(distance.getY() + Sprite.SCALED_SIZE);
-            }
-        }
-        if ((goLeft && distance.getY() == 0 && canMove(-1, 0)) || distance.getX() < 0) {
-            x = -KONDORIA_SPEED;
-            if (distance.getX() >= 0) {
-                distance.setX(distance.getX() - Sprite.SCALED_SIZE);
-            }
-        }
-        if ((goRight && distance.getY() == 0 && canMove(1, 0)) || distance.getX() > 0) {
-            x = KONDORIA_SPEED;
-            if (distance.getX() <= 0) {
-                distance.setX(distance.getX() + Sprite.SCALED_SIZE);
-            }
-        }
-        if (distance.getX() != 0 || distance.getY() != 0) {
-            move(x * KONDORIA_SPEED, y * KONDORIA_SPEED);
-            distance.setX(distance.getX() - x * KONDORIA_SPEED);
-            distance.setY(distance.getY() - y * KONDORIA_SPEED);
-            isMoving = true;
-        } else {
-            if (goUp) {
-                direction = Direction.up;
-            }
-            if (goDown) {
-                direction = Direction.down;
-            }
-            if (goLeft) {
-                direction = Direction.left;
-            }
-            if (goRight) {
-                direction = Direction.right;
-            }
-            isMoving = false;
-        }
     }
 
     public void findBomberAI() {
@@ -138,6 +88,56 @@ public class Minvo extends Enemy {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void handleMove() {
+        int x = 0;
+        int y = 0;
+        if ((goUp && distance.getX() == 0 && canMove(0, -1)) || distance.getY() < 0) {
+            y = -MINVO_SPEED;
+            if (distance.getY() >= 0) {
+                distance.setY(distance.getY() - Sprite.SCALED_SIZE);
+            }
+        }
+        if ((goDown && distance.getX() == 0 && canMove(0, 1)) || distance.getY() > 0) {
+            y = MINVO_SPEED;
+            if (distance.getY() <= 0) {
+                distance.setY(distance.getY() + Sprite.SCALED_SIZE);
+            }
+        }
+        if ((goLeft && distance.getY() == 0 && canMove(-1, 0)) || distance.getX() < 0) {
+            x = -MINVO_SPEED;
+            if (distance.getX() >= 0) {
+                distance.setX(distance.getX() - Sprite.SCALED_SIZE);
+            }
+        }
+        if ((goRight && distance.getY() == 0 && canMove(1, 0)) || distance.getX() > 0) {
+            x = MINVO_SPEED;
+            if (distance.getX() <= 0) {
+                distance.setX(distance.getX() + Sprite.SCALED_SIZE);
+            }
+        }
+        if (distance.getX() != 0 || distance.getY() != 0) {
+            move(x, y);
+            distance.setX(distance.getX() - x);
+            distance.setY(distance.getY() - y);
+            isMoving = true;
+        } else {
+            if (goUp) {
+                direction = Direction.up;
+            }
+            if (goDown) {
+                direction = Direction.down;
+            }
+            if (goLeft) {
+                direction = Direction.left;
+            }
+            if (goRight) {
+                direction = Direction.right;
+            }
+            isMoving = false;
+        }
     }
 
     @Override

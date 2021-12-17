@@ -36,6 +36,16 @@ public class Balloom extends Enemy {
     }
 
     @Override
+    public boolean canMove(int x, int y) {
+        Entity checkEntity = GamePlay.getEntityAtPosition(coordinate.getX() + x, coordinate.getY() + y);
+
+        if (!(checkEntity instanceof Wall) && !(checkEntity instanceof Brick)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void handleMove() {
         int x = 0;
         int y = 0;
@@ -64,9 +74,9 @@ public class Balloom extends Enemy {
             }
         }
         if (distance.getX() != 0 || distance.getY() != 0) {
-            move(x * BALLOOM_SPEED, y * BALLOOM_SPEED);
-            distance.setX(distance.getX() - x * BALLOOM_SPEED);
-            distance.setY(distance.getY() - y * BALLOOM_SPEED);
+            move(x, y);
+            distance.setX(distance.getX() - x);
+            distance.setY(distance.getY() - y);
             isMoving = true;
         } else {
             if (goUp) {
@@ -83,16 +93,6 @@ public class Balloom extends Enemy {
             }
             isMoving = false;
         }
-    }
-
-    @Override
-    public boolean canMove(int x, int y) {
-        Entity checkEntity = GamePlay.getEntityAtPosition(coordinate.getX() + x, coordinate.getY() + y);
-
-        if (!(checkEntity instanceof Wall) && !(checkEntity instanceof Brick)) {
-            return true;
-        }
-        return false;
     }
 
     @Override

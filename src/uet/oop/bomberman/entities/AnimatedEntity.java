@@ -97,11 +97,6 @@ public abstract class AnimatedEntity extends Entity {
                 }
                 break;
             default:
-        };
-        if (animation == 1600) {
-            animation = 0;
-        } else {
-            animation++;
         }
     }
 
